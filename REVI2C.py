@@ -1,4 +1,4 @@
-from . import REVmessages as REVMsg
+from . import REVMessage as REVMsg
 import time
 ##Note: I dont understand most of this and its very dense
 #I2C stuff

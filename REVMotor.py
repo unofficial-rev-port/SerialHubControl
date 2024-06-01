@@ -1,4 +1,4 @@
-from . import REVModule, REVADC, REVmessages as REVMsg
+from . import REVModule, REVADC, REVMessage as REVMsg
 
 #Some constants for motor commands
 Q16 = 65536.0

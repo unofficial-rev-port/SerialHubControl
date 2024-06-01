@@ -1,4 +1,4 @@
-from . import REVmessages as REVMsg
+from . import REVMessage as REVMsg
 
 #Digitial GPIO driver
 def setSingleDIOOutput(commObj, destination, dioPin, value):
