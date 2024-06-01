@@ -1,6 +1,0 @@
-[Desktop Entry]
-Name=REV Hub Interface - Community Edition
-Exec=/app/bin/REVHubInterface.sh
-Type=Application
-Icon=org.unofficialrevport.REVHubInterface
-Categories=Development
