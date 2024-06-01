@@ -452,7 +452,6 @@ UNIQUE_ID_FIRST = 80
 UNIQUE_ID_LAST = 95
 
 class IMU(I2CDevice):
-
     def __init__(self, commObj, channel, destinationModule):
         I2CDevice.__init__(self, commObj, channel, destinationModule, IMU_ADDRESS)
 

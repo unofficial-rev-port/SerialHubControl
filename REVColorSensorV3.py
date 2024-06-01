@@ -168,5 +168,3 @@ class REVColorSensorV3(I2CDevice):
     _LS_GAIN_6 = 2
     _LS_GAIN_9 = 3
     _LS_GAIN_18 = 4
-
-# okay decompiling REVColorSensorV3.pyc
