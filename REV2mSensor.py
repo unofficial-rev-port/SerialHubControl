@@ -5,7 +5,6 @@ VcselPeriodPreRange = 0
 VcselPeriodFinalRange = 1
 
 class REV2mSensor(I2CDevice):
-
     def __init__(self, commObj, channel, destinationModule, debugEnable=False):
         I2CDevice.__init__(self, commObj, channel, destinationModule, self._ADDRESS_I2C_DEFAULT)
         self._debug_enable = debugEnable

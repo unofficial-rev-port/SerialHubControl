@@ -1,6 +1,6 @@
-import threading, multiprocessing as mp, time, math, csv, REVComPorts, REVmessages as REVMsg, os, REVModule
+import multiprocessing as mp, time, REVComPorts, REVmessages as REVMsg
 from REVModule import Module
-import binascii, serial, time, queue
+import binascii, serial, time
 
 class REVcomm:
 
