@@ -1,8 +1,7 @@
 from . import REVMotor, REVServo, REVADC, REVDIO, REVI2C
 
-
+##Note: Modules are hubs (lynx modules)
 class Module:
-
     def __init__(self, commObj, address, parent):
         self.commObj = commObj
         self.address = address
@@ -31,17 +30,12 @@ class Module:
             self.adcPins.append(REVADC.ADCPin(self.commObj, l, self.address))
 
     def killSwitch(self):
+        #disable everything for safe stop
         for i in range(0, 4):
             self.motors[i].disable()
 
-        for j in range(0, 8):
-            pass
-
         for k in range(0, 6):
             self.servos[k].disable()
-
-        for l in range(0, 15):
-            pass
 
     def getParentStatus(self):
         return self.parent
@@ -144,9 +138,6 @@ class Module:
 
     def getBulkADCData(self):
         return self.commObj.getBulkADCData(self.address)
-
-    def getBulkI2CData(self):
-        return self.commObj.getBulkI2CData(self.address)
 
     def getBulkServoData(self):
         return self.commObj.getBulkServoData(self.address)

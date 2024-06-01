@@ -6,7 +6,6 @@ comPortCommand = ''
 testFixture = False
 
 class comPort:
-
     def __init__(self, sn, name):
         self.sn = sn
         self.name = name
@@ -22,10 +21,10 @@ class comPort:
         return self.name
 
 
+##Note: serial number stuff? may be causing issues for fw update
 def getPorts():
     comPorts = []
     device_list = list_ports.comports()
-    numdevs = len(device_list)
     for usbDevice in device_list:
         if 'SER=' in usbDevice.hwid:
             sections = usbDevice.hwid.split(' ')
@@ -33,7 +32,6 @@ def getPorts():
                 if 'SER=' in section:
                     serialNumber = section[4:]
                     deviceName = usbDevice.device
-                    time.sleep(0.2)
                     comPorts.append(comPort(serialNumber, deviceName))
 
     return comPorts

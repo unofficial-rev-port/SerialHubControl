@@ -15,6 +15,7 @@ VOLTAGE_5V_MONITOR = 12
 VOLTAGE_BATTERY_MONITOR = 13
 CONTROLLER_TEMPERATURE = 14
 
+##Note: appears to just be part of the current sensing for motors? (ADC = analog digital converter)
 class ADCPin:
 
     def __init__(self, commObj, channel, destinationModule):

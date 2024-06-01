@@ -1,6 +1,6 @@
 from . import REVmessages as REVMsg
 
-
+#Digitial I/O (the digital gpio)
 def setSingleDIOOutput(commObj, destination, dioPin, value):
     setSingleDIOOutput = REVMsg.SetSingleDIOOutput()
     setSingleDIOOutput.payload.dioPin = dioPin

@@ -2,9 +2,10 @@ import multiprocessing as mp, time, REVComPorts, REVmessages as REVMsg
 from REVModule import Module
 import binascii, serial, time
 
+#Serial Communications 
 class REVcomm:
-
     def __init__(self):
+        #Setup the serial connection
         self.serialReceive_Thread = False
         self.FunctionReturnTime = 0
         self.msgNum = 1
@@ -19,6 +20,7 @@ class REVcomm:
         self.REVProcessor = serial.Serial(baudrate=460800, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
 
     def listPorts(self):
+        #list available ports
         REVComPorts.populateSerialPorts()
         return REVComPorts.REVPorts
 
@@ -37,9 +39,6 @@ class REVcomm:
 
     def closeActivePort(self):
         self.REVProcessor.close()
-
-    def getTime_ms(self):
-        return int(round(time.time() * 1000))
 
     def sendAndReceive(self, PacketToWrite, destination):
         incomingPacket = ''
@@ -117,6 +116,7 @@ class REVcomm:
         return True
 
     def checkResponse(self, receivedPacket, PacketToWrite):
+        #Check for valid response
         packetType = int(receivedPacket.header.packetType)
         data = PacketToWrite.header.packetType.data >> 8 | PacketToWrite.header.packetType.data % 256 << 8
         responseExpected = REVMsg.printDict[data]['Response']
@@ -176,7 +176,6 @@ class REVcomm:
         for bytePointer in range(0, len(bytes), 2):
             thisByte = bytes[bytePointer:bytePointer + 2]
             swappedBytes = thisByte + swappedBytes
-
         return swappedBytes
 
     def getModuleStatus(self, destination):
@@ -236,6 +235,7 @@ class REVcomm:
         self.sendAndReceive(debugLogLevelMsg, destination)
 
     def discovery(self):
+        #Discover Connected modules
         self.discovered = REVMsg.Discovery()
         packets = self.sendAndReceive(self.discovered, 255)
         REVModules = []
@@ -246,11 +246,13 @@ class REVcomm:
         return REVModules
 
     def getBulkInputData(self, destination):
+        #analgous to bulkreads in the sdk
         getBulkInputDataMsg = REVMsg.GetBulkInputData()
         packet = self.sendAndReceive(getBulkInputDataMsg, destination)
         return packet
 
     def phoneChargeControl(self, destination, enable):
+        #seems to be able to charge connected android phone somehow? not sure how this even works
         phoneChargeControlMsg = REVMsg.PhoneChargeControl()
         phoneChargeControlMsg.payload.enable = enable
         self.sendAndReceive(phoneChargeControlMsg, destination)
@@ -267,21 +269,25 @@ class REVcomm:
         self.sendAndReceive(injectDataLogHintMsg, destination)
 
     def readVersionString(self, destination):
+        #used to read the firmware version
         readVersionStringMsg = REVMsg.ReadVersionString()
         packet = self.sendAndReceive(readVersionStringMsg, destination)
         return packet.payload.versionString
 
     def getBulkMotorData(self, destination):
+        #Halfassed bulkread?
         getBulkMotorDataMsg = REVMsg.GetBulkMotorData()
         packet = self.sendAndReceive(getBulkMotorDataMsg, destination)
         return packet
 
     def getBulkADCData(self, destination):
+        #also halfassed 
         getBulkADCDataMsg = REVMsg.GetBulkADCData()
         packet = self.sendAndReceive(getBulkADCDataMsg, destination)
         return packet
 
     def getBulkServoData(self, destination):
+        #reading servos?
         getBulkServoDataMsg = REVMsg.GetBulkServoData()
         packet = self.sendAndReceive(getBulkServoDataMsg, destination)
         return packet

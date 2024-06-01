@@ -4,12 +4,12 @@ Q16 = 65536.0
 MODE_CONSTANT_POWER = 0
 MODE_CONSTANT_VELOCITY = 1
 MODE_POSITION_TARGET = 2
-MODE_CONSTANT_CURRENT = 3
 BRAKE_AT_ZERO = 0
 FLOAT_AT_ZERO = 1
 VELOCITY_OFFSET = 6
 CURRENT_OFFSET = 8
 
+##Motor driver
 def setMotorChannelMode(commObj, destination, motorChannel, motorMode, floatAtZero):
     setMotorChannelModeMsg = REVMsg.SetMotorChannelMode()
     setMotorChannelModeMsg.payload.motorChannel = motorChannel
@@ -150,11 +150,6 @@ def getBulkPIDData(commObj, destination, motorChannel):
     packet = commObj.sendAndReceive(getBulkPIDDataMsg, destination)
     return packet
 
-
-def setCurrentPIDCoefficients(commObj, destination, motorChannel, p, i, d):
-    getMotorPIDCoefficients(commObj, destination, motorChannel, 3, p, i, d)
-
-
 def setVelocityPIDCoefficients(commObj, destination, motorChannel, p, i, d):
     setMotorPIDCoefficients(commObj, destination, motorChannel, 1, p, i, d)
 
@@ -162,9 +157,6 @@ def setVelocityPIDCoefficients(commObj, destination, motorChannel, p, i, d):
 def setPositionPIDCoefficients(commObj, destination, motorChannel, p, i, d):
     setMotorPIDCoefficients(commObj, destination, motorChannel, 2, p, i, d)
 
-
-def getCurrentPIDCoefficients(commObj, destination, motorChannel):
-    return getMotorPIDCoefficients(commObj, destination, motorChannel, 3)
 
 
 def getVelocityPIDCoefficients(commObj, destination, motorChannel):
@@ -176,7 +168,6 @@ def getPositionPIDCoefficients(commObj, destination, motorChannel):
 
 
 class Motor:
-
     def __init__(self, commObj, channel, destinationModule):
         self.channel = channel
         self.destinationModule = destinationModule
@@ -226,11 +217,6 @@ class Motor:
     def getPower(self):
         return getMotorConstantPower(self.commObj, self.destinationModule, self.channel)
 
-    def setTargetCurrent(self, current):
-        self.setCurrentLimit(current)
-
-    def getTargetCurrent(self):
-        return self.getCurrentLimit()
 
     def setTargetVelocity(self, velocity):
         setMotorTargetVelocity(self.commObj, self.destinationModule, self.channel, velocity)
@@ -264,12 +250,6 @@ class Motor:
 
     def getCurrent(self):
         return self.motorCurrent.getADC(0)
-
-    def setCurrentPID(self, p, i, d):
-        setCurrentPIDCoefficients(self.commObj, self.destinationModule, self.channel, p, i, d)
-
-    def getCurrentPID(self, p, i, d):
-        return getCurrentPIDCoefficients(self.commObj, self.destinationModule, self.channel)
 
     def setVelocityPID(self, p, i, d):
         setVelocityPIDCoefficients(self.commObj, self.destinationModule, self.channel, p, i, d)

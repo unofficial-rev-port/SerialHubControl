@@ -1,7 +1,7 @@
 from . import REVmessages as REVMsg
 import time
-
-
+##Note: I dont understand most of this and its very dense
+#I2C stuff
 def i2cWriteSingleByte(commObj, destination, i2cChannel, slaveAddress, byteToWrite):
     i2cWriteSingleByteMsg = REVMsg.I2CWriteSingleByte()
     i2cWriteSingleByteMsg.payload.i2cChannel = i2cChannel
@@ -544,5 +544,4 @@ class IMU(I2CDevice):
                 it_val = it_val - (1 << bits)
             values.append(it_val)
             val = val >> 16
-
         return values

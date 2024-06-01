@@ -249,10 +249,19 @@ class REVPayload:
 
 
 class REVPacket:
-    """
-   |DEKAPlSaSaDsDsMnCmPa------>Ck|
-    0 1 2 3 4 5 6 7 8 9 A B C D E F
-   """
+    ##Packet definition
+    #0x44
+    #0x4B
+    #PacketLength
+    #PacketLength
+    #Destination Module Address
+    #Source Module Address
+    #Message Number
+    #Reference Number
+    #Packet ID
+    #Payload....
+    #Checksum
+
     FrameIndex_Start = 0
     FrameIndex_End = FrameIndex_Start + 4
     HeaderIndex_Start = FrameIndex_End
@@ -326,63 +335,53 @@ class REVPacket:
                 value = swappedText
             setattr(self.payload, name, value)
 
-
+##This goes on to define so many commands 
 class ACK_Payload(REVPayload):
-
     def __init__(self):
         self.attnReq = REVBytes(1)
 
 
 class NACK_Payload(REVPayload):
-
     def __init__(self):
         self.nackCode = REVBytes(1)
 
 
 class GetModuleStatus_Payload(REVPayload):
-
     def __init__(self):
         self.clearStatus = REVBytes(1)
 
 
 class KeepAlive_Payload(REVPayload):
-
     def __init__(self):
         pass
 
 
 class FailSafe_Payload(REVPayload):
-
     def __init__(self):
         pass
 
 
 class SetNewModuleAddress_Payload(REVPayload):
-
     def __init__(self):
         self.moduleAddress = REVBytes(1)
 
 
 class QueryInterface_Payload(REVPayload):
-
     def __init__(self):
         self.interfaceName = REVBytes(PAYLOAD_MAX_SIZE - 7)
 
 
 class StartProgramDownload_Payload(REVPayload):
-
     def __init__(self):
         pass
 
 
 class ProgramDownloadChunk_Payload(REVPayload):
-
     def __init__(self):
         pass
 
 
 class SetModuleLEDColor_Payload(REVPayload):
-
     def __init__(self):
         self.redPower = REVBytes(1)
         self.greenPower = REVBytes(1)
@@ -390,13 +389,11 @@ class SetModuleLEDColor_Payload(REVPayload):
 
 
 class GetModuleLEDColor_Payload(REVPayload):
-
     def __init__(self):
         pass
 
 
 class SetModuleLEDPattern_Payload(REVPayload):
-
     def __init__(self):
         self.rgbtStep0 = REVBytes(4)
         self.rgbtStep1 = REVBytes(4)
@@ -417,32 +414,27 @@ class SetModuleLEDPattern_Payload(REVPayload):
 
 
 class GetModuleLEDPattern_Payload(REVPayload):
-
     def __init__(self):
         pass
 
 
 class DebugLogLevel_Payload(REVPayload):
-
     def __init__(self):
         self.groupNumber = REVBytes(1)
         self.verbosityLevel = REVBytes(1)
 
 
 class Discovery_Payload(REVPayload):
-
     def __init__(self):
         pass
 
 
 class GetBulkInputData_Payload(REVPayload):
-
     def __init__(self):
         pass
 
 
 class SetSingleDIOOutput_Payload(REVPayload):
-
     def __init__(self):
         self.dioPin = REVBytes(1)
         self.value = REVBytes(1)
@@ -455,26 +447,22 @@ class SetAllDIOOutputs_Payload(REVPayload):
 
 
 class SetDIODirection_Payload(REVPayload):
-
     def __init__(self):
         self.dioPin = REVBytes(1)
         self.directionOutput = REVBytes(1)
 
 
 class GetDIODirection_Payload(REVPayload):
-
     def __init__(self):
         self.dioPin = REVBytes(1)
 
 
 class GetSingleDIOInput_Payload(REVPayload):
-
     def __init__(self):
         self.dioPin = REVBytes(1)
 
 
 class GetAllDIOInputs_Payload(REVPayload):
-
     def __init__(self):
         pass
 
@@ -493,26 +481,22 @@ class SetMotorChannelMode_Payload(REVPayload):
 
 
 class GetMotorChannelMode_Payload(REVPayload):
-
     def __init__(self):
         self.motorChannel = REVBytes(1)
 
 
 class SetMotorChannelEnable_Payload(REVPayload):
-
     def __init__(self):
         self.motorChannel = REVBytes(1)
         self.enabled = REVBytes(1)
 
 
 class GetMotorChannelEnable_Payload(REVPayload):
-
     def __init__(self):
         self.motorChannel = REVBytes(1)
 
 
 class SetMotorChannelCurrentAlertLevel_Payload(REVPayload):
-
     def __init__(self):
         self.motorChannel = REVBytes(1)
         self.currentLimit = REVBytes(2)
@@ -546,13 +530,11 @@ class SetMotorTargetVelocity_Payload(REVPayload):
 
 
 class GetMotorTargetVelocity_Payload(REVPayload):
-
     def __init__(self):
         self.motorChannel = REVBytes(1)
 
 
 class SetMotorTargetPosition_Payload(REVPayload):
-
     def __init__(self):
         self.motorChannel = REVBytes(1)
         self.position = REVBytes(4)
@@ -565,19 +547,16 @@ class GetMotorTargetPosition_Payload(REVPayload):
 
 
 class GetMotorAtTarget_Payload(REVPayload):
-
     def __init__(self):
         self.motorChannel = REVBytes(1)
 
 
 class GetMotorEncoderPosition_Payload(REVPayload):
-
     def __init__(self):
         self.motorChannel = REVBytes(1)
 
 
 class SetMotorPIDCoefficients_Payload(REVPayload):
-
     def __init__(self):
         self.motorChannel = REVBytes(1)
         self.mode = REVBytes(1)
@@ -666,7 +645,6 @@ class I2CWriteSingleByte_Payload(REVPayload):
 
 
 class I2CWriteMultipleBytes_Payload(REVPayload):
-
     def __init__(self):
         self.i2cChannel = REVBytes(1)
         self.slaveAddress = REVBytes(1)
@@ -680,14 +658,12 @@ class I2CWriteStatusQuery_Payload(REVPayload):
 
 
 class I2CReadSingleByte_Payload(REVPayload):
-
     def __init__(self):
         self.i2cChannel = REVBytes(1)
         self.slaveAddress = REVBytes(1)
 
 
 class I2CReadMultipleBytes_Payload(REVPayload):
-
     def __init__(self):
         self.i2cChannel = REVBytes(1)
         self.slaveAddress = REVBytes(1)
@@ -695,57 +671,48 @@ class I2CReadMultipleBytes_Payload(REVPayload):
 
 
 class I2CReadStatusQuery_Payload(REVPayload):
-
     def __init__(self):
         self.i2cChannel = REVBytes(1)
 
 
 class I2CConfigureChannel_Payload(REVPayload):
-
     def __init__(self):
         self.i2cChannel = REVBytes(1)
         self.speedCode = REVBytes(1)
 
 
 class PhoneChargeControl_Payload(REVPayload):
-
     def __init__(self):
         self.enable = REVBytes(1)
 
 
 class PhoneChargeQuery_Payload(REVPayload):
-
     def __init__(self):
         pass
 
 
 class InjectDataLogHint_Payload(REVPayload):
-
     def __init__(self):
         self.length = REVBytes(1)
         self.hintText = REVBytes(PAYLOAD_MAX_SIZE - 7)
 
 
 class I2CConfigureQuery_Payload(REVPayload):
-
     def __init__(self):
         self.i2cChannel = REVBytes(1)
 
 
 class ReadVersionString_Payload(REVPayload):
-
     def __init__(self):
         pass
 
 
 class GetBulkPIDData_Payload(REVPayload):
-
     def __init__(self):
         self.motorChannel = REVBytes(1)
 
 
 class I2CBlockReadConfig_Payload(REVPayload):
-
     def __init__(self):
         self.channel = REVBytes(1)
         self.address = REVBytes(1)
@@ -755,13 +722,11 @@ class I2CBlockReadConfig_Payload(REVPayload):
 
 
 class I2CBlockReadQuery_Payload(REVPayload):
-
     def __init__(self):
         self.channel = REVBytes(1)
 
 
 class I2CWriteReadMultipleBytes_Payload(REVPayload):
-
     def __init__(self):
         self.channel = REVBytes(1)
         self.address = REVBytes(1)
@@ -770,7 +735,6 @@ class I2CWriteReadMultipleBytes_Payload(REVPayload):
 
 
 class IMUBlockReadConfig_Payload(REVPayload):
-
     def __init__(self):
         self.startRegister = REVBytes(1)
         self.numberOfBytes = REVBytes(1)
@@ -778,31 +742,20 @@ class IMUBlockReadConfig_Payload(REVPayload):
 
 
 class IMUBlockReadQuery_Payload(REVPayload):
-
     def __init__(self):
         self.channel = REVBytes(1)
 
 
 class GetBulkMotorData_Payload(REVPayload):
-
     def __init__(self):
         pass
 
 
 class GetBulkADCData_Payload(REVPayload):
-
     def __init__(self):
         pass
-
-
-class GetBulkI2CData_Payload(REVPayload):
-
-    def __init__(self):
-        pass
-
 
 class GetBulkServoData_Payload(REVPayload):
-
     def __init__(self):
         pass
 
@@ -1113,7 +1066,6 @@ class IMUBlockReadQuery_RSP_Payload(REVPayload):
 
 
 class GetBulkMotorData_RSP_Payload(REVPayload):
-
     def __init__(self):
         self.motor0Encoder = REVBytes(4)
         self.motor1Encoder = REVBytes(4)
@@ -1149,23 +1101,6 @@ class GetBulkADCData_RSP_Payload(REVPayload):
         self.mon5v_mV = REVBytes(2)
         self.batteryVoltage_mV = REVBytes(2)
         self.monotonicTime = REVBytes(4)
-
-
-class GetBulkI2CData_RSP_Payload(REVPayload):
-
-    def __init__(self):
-        self.i2c0data = REVBytes(10)
-        self.i2c1data = REVBytes(10)
-        self.i2c2data = REVBytes(10)
-        self.i2c3data = REVBytes(10)
-        self.imuBlock = REVBytes(10)
-        self.i2c0Status = REVBytes(1)
-        self.i2c1Status = REVBytes(1)
-        self.i2c2Status = REVBytes(1)
-        self.i2c3Status = REVBytes(1)
-        self.imuStatus = REVBytes(1)
-        self.monotonicTime = REVBytes(4)
-
 
 class GetBulkServoData_RSP_Payload(REVPayload):
 
@@ -1259,7 +1194,6 @@ class MsgNum:
     IMUBlockReadQuery = DekaInterfacePrefix + 54
     GetBulkMotorData = DekaInterfacePrefix + 55
     GetBulkADCData = DekaInterfacePrefix + 56
-    GetBulkI2CData = DekaInterfacePrefix + 57
     GetBulkServoData = DekaInterfacePrefix + 64
 
 
@@ -1301,7 +1235,6 @@ class RespNum:
     IMUBlockReadQuery_RSP = RESPONSE_BIT | MsgNum.IMUBlockReadQuery
     GetBulkMotorData_RSP = RESPONSE_BIT | MsgNum.GetBulkMotorData
     GetBulkADCData_RSP = RESPONSE_BIT | MsgNum.GetBulkADCData
-    GetBulkI2CData_RSP = RESPONSE_BIT | MsgNum.GetBulkI2CData
     GetBulkServoData_RSP = RESPONSE_BIT | MsgNum.GetBulkServoData
 
 
@@ -1726,25 +1659,17 @@ class IMUBlockReadQuery(REVPacket):
 
 
 class GetBulkMotorData(REVPacket):
-
     def __init__(self):
         REVPacket.__init__(self, REVHeader(Cmd=MsgNum.GetBulkMotorData), GetBulkMotorData_Payload())
 
 
 class GetBulkADCData(REVPacket):
-
     def __init__(self):
         REVPacket.__init__(self, REVHeader(Cmd=MsgNum.GetBulkADCData), GetBulkADCData_Payload())
 
 
-class GetBulkI2CData(REVPacket):
-
-    def __init__(self):
-        REVPacket.__init__(self, REVHeader(Cmd=MsgNum.GetBulkI2CData), GetBulkI2CData_Payload())
-
 
 class GetBulkServoData(REVPacket):
-
     def __init__(self):
         REVPacket.__init__(self, REVHeader(Cmd=MsgNum.GetBulkServoData), GetBulkServoData_Payload())
 
@@ -1958,13 +1883,6 @@ class GetBulkADCData_RSP(REVPacket):
     def __init__(self):
         REVPacket.__init__(self, REVHeader(Cmd=RespNum.GetBulkADCData_RSP), GetBulkADCData_RSP_Payload())
 
-
-class GetBulkI2CData_RSP(REVPacket):
-
-    def __init__(self):
-        REVPacket.__init__(self, REVHeader(Cmd=RespNum.GetBulkI2CData_RSP), GetBulkI2CData_RSP_Payload())
-
-
 class GetBulkServoData_RSP(REVPacket):
 
     def __init__(self):
@@ -2115,8 +2033,6 @@ printDict = {(MsgNum.ACK): {'Name': 'ACK', 'Packet': ACK,
                                'Response': (RespNum.GetBulkMotorData_RSP)}, 
    (MsgNum.GetBulkADCData): {'Name': 'GetBulkADCData', 'Packet': GetBulkADCData, 
                              'Response': (RespNum.GetBulkADCData_RSP)}, 
-   (MsgNum.GetBulkI2CData): {'Name': 'GetBulkI2CData', 'Packet': GetBulkI2CData, 
-                             'Response': (RespNum.GetBulkI2CData_RSP)}, 
    (MsgNum.GetBulkServoData): {'Name': 'GetBulkServoData', 'Packet': GetBulkServoData, 
                                'Response': (RespNum.GetBulkServoData_RSP)}, 
    (RespNum.GetModuleStatus_RSP): {'Name': 'GetModuleStatus_RSP', 'Packet': GetModuleStatus_RSP, 
@@ -2187,9 +2103,5 @@ printDict = {(MsgNum.ACK): {'Name': 'ACK', 'Packet': ACK,
                                     'Response ': None}, 
    (RespNum.GetBulkADCData_RSP): {'Name': 'GetBulkADCData_RSP', 'Packet': GetBulkADCData_RSP, 
                                   'Response ': None}, 
-   (RespNum.GetBulkI2CData_RSP): {'Name': 'GetBulkI2CData_RSP', 'Packet': GetBulkI2CData_RSP, 
-                                  'Response ': None}, 
    (RespNum.GetBulkServoData_RSP): {'Name': 'GetBulkServoData_RSP', 'Packet': GetBulkServoData_RSP, 
                                     'Response ': None}}
-
-# okay decompiling REVmessages.pyc

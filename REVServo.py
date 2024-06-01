@@ -1,6 +1,6 @@
 from . import REVmessages as REVMsg
 
-
+##Servo driver
 def setServoConfiguration(commObj, destination, servoChannel, framePeriod):
     setServoConfigurationMsg = REVMsg.SetServoConfiguration()
     setServoConfigurationMsg.payload.servoChannel = servoChannel

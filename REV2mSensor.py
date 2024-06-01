@@ -3,7 +3,9 @@ from .REVI2C import I2CDevice
 import sys, time
 VcselPeriodPreRange = 0
 VcselPeriodFinalRange = 1
+##Note: appears to be partially just taken from VL53L0X docs? 
 
+#i2c REV2mSensor driver
 class REV2mSensor(I2CDevice):
     def __init__(self, commObj, channel, destinationModule, debugEnable=False):
         I2CDevice.__init__(self, commObj, channel, destinationModule, self._ADDRESS_I2C_DEFAULT)
@@ -11,11 +13,12 @@ class REV2mSensor(I2CDevice):
         self.setType('REV2mSensor')
 
     def _debugPrint(self, val):
+    #conditional printing
         if self._debug_enable == True:
             print(val)
 
     def Is2mDistanceSensor(self):
-
+    #Guess and check if a device is a 2m
         def VL53L0X_check(addr, expected, numBytes=1):
             value = self.readRegister(addr, numBytes)
             if value != expected:
@@ -37,10 +40,8 @@ class REV2mSensor(I2CDevice):
             return False
         return True
 
-    def GetDistance(self):
-        pass
-
     def initialize(self):
+        #initialize i2c device
         self.writeRegister(136, 0)
         self.writeRegister(128, 1)
         self.writeRegister(255, 1)
