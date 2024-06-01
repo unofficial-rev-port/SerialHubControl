@@ -401,7 +401,6 @@ class DebugLogLevel_Payload(REVPayload):
         self.groupNumber = REVBytes(1)
         self.verbosityLevel = REVBytes(1)
 
-
 class Discovery_Payload(REVPayload):
     def __init__(self):
         pass
