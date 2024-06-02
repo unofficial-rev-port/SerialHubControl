@@ -83,49 +83,58 @@ class REVColorSensorV3(I2CDevice):
          r, g, b, c)
 
     def getIrValue(self):
+        """Get just the range"""
         self.writeByte(self._LS_DATA_IR)
         ir = self.readMultipleBytes(3)
         self.logger.debug('IR: %d', ir)
         return ir
 
     def getGreenValue(self):
+        """Get just the green"""
         self.writeByte(self._LS_DATA_GREEN)
         green = self.readMultipleBytes(3)
         self.logger.debug('G: %d', green)
         return green
 
     def getRedValue(self):
+        """Get just the red"""
         self.writeByte(self._LS_DATA_RED)
         red = self.readMultipleBytes(3)
         self.logger.debug('R: %d', red)
         return red
 
     def getBlueValue(self):
+        """Get just the blue"""
         self.writeByte(self._LS_DATA_BLUE)
         blue = self.readMultipleBytes(3)
         self.logger.debug('B: %d', blue)
         return blue
 
     def readRegister(self, addr):
+        """Read the whole register"""
         self.writeByte(addr)
         tmp = self.readByte()
         self.logger.debug('Reading 0x%02X 0x%02X', addr, tmp)
         return tmp
 
     def printRegister(self, addr):
+        """Print Register if debug is enabled"""
         tmp = self.readRegister(addr)
         self.logger.debug('Register 0x%02X: 0x%02X', addr, tmp)
 
     def readWord(self, addr):
+        """Read the word value for the color (?)"""
         self.writeByte(addr)
         tmp = self.readMultipleBytes(2)
         self.logger.debug('Reading 0x%02X 0x%04X', addr, tmp)
         return tmp
 
     def writeRegister(self, register, value):
+        """write to the i2c register"""
         self.logger.debug('Writing 0x%02X 0x%02X', register, value)
         self.writeMultipleBytes(2, register & 255 | value << 8)
 
+    #Some constants
     _REV_COLOR_SENSOR_ADDRESS = 82
     _REV_COLOR_SENSOR_ID = 194
     _MAIN_CTRL = 0
