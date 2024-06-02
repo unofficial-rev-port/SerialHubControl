@@ -634,10 +634,6 @@ class ReadVersionString_Payload(REVPayload):
     def __init__(self):
         pass
 
-class GetBulkPIDData_Payload(REVPayload):
-    def __init__(self):
-        self.motorChannel = REVBytes(1)
-
 class I2CBlockReadConfig_Payload(REVPayload):
     def __init__(self):
         self.channel = REVBytes(1)
@@ -666,18 +662,6 @@ class IMUBlockReadConfig_Payload(REVPayload):
 class IMUBlockReadQuery_Payload(REVPayload):
     def __init__(self):
         self.channel = REVBytes(1)
-
-class GetBulkMotorData_Payload(REVPayload):
-    def __init__(self):
-        pass
-
-class GetBulkADCData_Payload(REVPayload):
-    def __init__(self):
-        pass
-
-class GetBulkServoData_Payload(REVPayload):
-    def __init__(self):
-        pass
 
 class GetModuleStatus_RSP_Payload(REVPayload):
     def __init__(self):
@@ -882,28 +866,6 @@ class ReadVersionString_RSP_Payload(REVPayload):
         self.length = REVBytes(1)
         self.versionString = REVBytes(40)
 
-class GetBulkPIDData_RSP_Payload(REVPayload):
-    def __init__(self):
-        self.motorCurPterm = REVBytes(4)
-        self.motorCurIterm = REVBytes(4)
-        self.motorCurDterm = REVBytes(4)
-        self.motorCurOutput = REVBytes(4)
-        self.motorCurCmd = REVBytes(4)
-        self.motorCurError = REVBytes(4)
-        self.motorVelPterm = REVBytes(4)
-        self.motorVelIterm = REVBytes(4)
-        self.motorVelDterm = REVBytes(4)
-        self.motorVelOutput = REVBytes(4)
-        self.motorVelCmd = REVBytes(4)
-        self.motorVelError = REVBytes(4)
-        self.motorPosPterm = REVBytes(4)
-        self.motorPosIterm = REVBytes(4)
-        self.motorPosDterm = REVBytes(4)
-        self.motorPosOutput = REVBytes(4)
-        self.motorPosCmd = REVBytes(4)
-        self.motorPosError = REVBytes(4)
-        self.monotonicTime = REVBytes(4)
-
 class I2CBlockReadQuery_RSP_Payload(REVPayload):
     def __init__(self):
         self.address = REVBytes(1)
@@ -916,57 +878,6 @@ class IMUBlockReadQuery_RSP_Payload(REVPayload):
         self.startRegister = REVBytes(1)
         self.numberOfBytes = REVBytes(1)
         self.readInterval_ms = REVBytes(1)
-
-class GetBulkMotorData_RSP_Payload(REVPayload):
-    def __init__(self):
-        self.motor0Encoder = REVBytes(4)
-        self.motor1Encoder = REVBytes(4)
-        self.motor2Encoder = REVBytes(4)
-        self.motor3Encoder = REVBytes(4)
-        self.motorStatus = REVBytes(1)
-        self.motor0Velocity = REVBytes(2)
-        self.motor1Velocity = REVBytes(2)
-        self.motor2Velocity = REVBytes(2)
-        self.motor3Velocity = REVBytes(2)
-        self.motor0mode = REVBytes(1)
-        self.motor1mode = REVBytes(1)
-        self.motor2mode = REVBytes(1)
-        self.motor3mode = REVBytes(1)
-        self.monotonicTime = REVBytes(4)
-
-class GetBulkADCData_RSP_Payload(REVPayload):
-    def __init__(self):
-        self.analogInput0 = REVBytes(2)
-        self.analogInput1 = REVBytes(2)
-        self.analogInput2 = REVBytes(2)
-        self.analogInput3 = REVBytes(2)
-        self.gpioCurrent_mA = REVBytes(2)
-        self.i2cCurrent_mA = REVBytes(2)
-        self.servoCurrent_mA = REVBytes(2)
-        self.batteryCurrent_mA = REVBytes(2)
-        self.motor0current_mA = REVBytes(2)
-        self.motor1current_mA = REVBytes(2)
-        self.motor2current_mA = REVBytes(2)
-        self.motor3current_mA = REVBytes(2)
-        self.mon5v_mV = REVBytes(2)
-        self.batteryVoltage_mV = REVBytes(2)
-        self.monotonicTime = REVBytes(4)
-
-class GetBulkServoData_RSP_Payload(REVPayload):
-    def __init__(self):
-        self.servo0cmd = REVBytes(2)
-        self.servo1cmd = REVBytes(2)
-        self.servo2cmd = REVBytes(2)
-        self.servo3cmd = REVBytes(2)
-        self.servo4cmd = REVBytes(2)
-        self.servo5cmd = REVBytes(2)
-        self.servo0framePeriod_us = REVBytes(2)
-        self.servo1framePeriod_us = REVBytes(2)
-        self.servo2framePeriod_us = REVBytes(2)
-        self.servo3framePeriod_us = REVBytes(2)
-        self.servo4framePeriod_us = REVBytes(2)
-        self.servo5framePeriod_us = REVBytes(2)
-        self.monotonicTime = REVBytes(4)
 
 class MsgNum:
     ACK = 32513
@@ -1034,15 +945,11 @@ class MsgNum:
     InjectDataLogHint = DekaInterfacePrefix + 46
     I2CConfigureQuery = DekaInterfacePrefix + 47
     ReadVersionString = DekaInterfacePrefix + 48
-    GetBulkPIDData = DekaInterfacePrefix + 49
     I2CBlockReadConfig = DekaInterfacePrefix + 50
     I2CBlockReadQuery = DekaInterfacePrefix + 51
     I2CWriteReadMultipleBytes = DekaInterfacePrefix + 52
     IMUBlockReadConfig = DekaInterfacePrefix + 53
     IMUBlockReadQuery = DekaInterfacePrefix + 54
-    GetBulkMotorData = DekaInterfacePrefix + 55
-    GetBulkADCData = DekaInterfacePrefix + 56
-    GetBulkServoData = DekaInterfacePrefix + 64
 
 RESPONSE_BIT = 32768
 
@@ -1077,12 +984,8 @@ class RespNum:
     PhoneChargeQuery_RSP = RESPONSE_BIT | MsgNum.PhoneChargeQuery
     I2CConfigureQuery_RSP = RESPONSE_BIT | MsgNum.I2CConfigureQuery
     ReadVersionString_RSP = RESPONSE_BIT | MsgNum.ReadVersionString
-    GetBulkPIDData_RSP = RESPONSE_BIT | MsgNum.GetBulkPIDData
     I2CBlockReadQuery_RSP = RESPONSE_BIT | MsgNum.I2CBlockReadQuery
     IMUBlockReadQuery_RSP = RESPONSE_BIT | MsgNum.IMUBlockReadQuery
-    GetBulkMotorData_RSP = RESPONSE_BIT | MsgNum.GetBulkMotorData
-    GetBulkADCData_RSP = RESPONSE_BIT | MsgNum.GetBulkADCData
-    GetBulkServoData_RSP = RESPONSE_BIT | MsgNum.GetBulkServoData
 
 class ACK(REVPacket):
     def __init__(self):
@@ -1344,10 +1247,6 @@ class ReadVersionString(REVPacket):
     def __init__(self):
         REVPacket.__init__(self, REVHeader(Cmd=MsgNum.ReadVersionString), ReadVersionString_Payload())
 
-class GetBulkPIDData(REVPacket):
-    def __init__(self):
-        REVPacket.__init__(self, REVHeader(Cmd=MsgNum.GetBulkPIDData), GetBulkPIDData_Payload())
-
 class I2CBlockReadConfig(REVPacket):
     def __init__(self):
         REVPacket.__init__(self, REVHeader(Cmd=MsgNum.I2CBlockReadConfig), I2CBlockReadConfig_Payload())
@@ -1367,18 +1266,6 @@ class IMUBlockReadConfig(REVPacket):
 class IMUBlockReadQuery(REVPacket):
     def __init__(self):
         REVPacket.__init__(self, REVHeader(Cmd=MsgNum.IMUBlockReadQuery), IMUBlockReadQuery_Payload())
-
-class GetBulkMotorData(REVPacket):
-    def __init__(self):
-        REVPacket.__init__(self, REVHeader(Cmd=MsgNum.GetBulkMotorData), GetBulkMotorData_Payload())
-
-class GetBulkADCData(REVPacket):
-    def __init__(self):
-        REVPacket.__init__(self, REVHeader(Cmd=MsgNum.GetBulkADCData), GetBulkADCData_Payload())
-
-class GetBulkServoData(REVPacket):
-    def __init__(self):
-        REVPacket.__init__(self, REVHeader(Cmd=MsgNum.GetBulkServoData), GetBulkServoData_Payload())
 
 class GetModuleStatus_RSP(REVPacket):
     def __init__(self):
@@ -1500,10 +1387,6 @@ class ReadVersionString_RSP(REVPacket):
     def __init__(self):
         REVPacket.__init__(self, REVHeader(Cmd=RespNum.ReadVersionString_RSP), ReadVersionString_RSP_Payload())
 
-class GetBulkPIDData_RSP(REVPacket):
-    def __init__(self):
-        REVPacket.__init__(self, REVHeader(Cmd=RespNum.GetBulkPIDData_RSP), GetBulkPIDData_RSP_Payload())
-
 class I2CBlockReadQuery_RSP(REVPacket):
     def __init__(self):
         REVPacket.__init__(self, REVHeader(Cmd=RespNum.I2CBlockReadQuery_RSP), I2CBlockReadQuery_RSP_Payload())
@@ -1511,18 +1394,6 @@ class I2CBlockReadQuery_RSP(REVPacket):
 class IMUBlockReadQuery_RSP(REVPacket):
     def __init__(self):
         REVPacket.__init__(self, REVHeader(Cmd=RespNum.IMUBlockReadQuery_RSP), IMUBlockReadQuery_RSP_Payload())
-
-class GetBulkMotorData_RSP(REVPacket):
-    def __init__(self):
-        REVPacket.__init__(self, REVHeader(Cmd=RespNum.GetBulkMotorData_RSP), GetBulkMotorData_RSP_Payload())
-
-class GetBulkADCData_RSP(REVPacket):
-    def __init__(self):
-        REVPacket.__init__(self, REVHeader(Cmd=RespNum.GetBulkADCData_RSP), GetBulkADCData_RSP_Payload())
-
-class GetBulkServoData_RSP(REVPacket):
-    def __init__(self):
-        REVPacket.__init__(self, REVHeader(Cmd=RespNum.GetBulkServoData_RSP), GetBulkServoData_RSP_Payload())
 
 printDict = {(MsgNum.ACK): {'Name': 'ACK', 'Packet': ACK, 
                   'Response': None}, 
@@ -1652,8 +1523,6 @@ printDict = {(MsgNum.ACK): {'Name': 'ACK', 'Packet': ACK,
                                 'Response': (RespNum.I2CConfigureQuery_RSP)}, 
    (MsgNum.ReadVersionString): {'Name': 'ReadVersionString', 'Packet': ReadVersionString, 
                                 'Response': (RespNum.ReadVersionString_RSP)}, 
-   (MsgNum.GetBulkPIDData): {'Name': 'GetBulkPIDData', 'Packet': GetBulkPIDData, 
-                             'Response': (RespNum.GetBulkPIDData_RSP)}, 
    (MsgNum.I2CBlockReadConfig): {'Name': 'I2CBlockReadConfig', 'Packet': I2CBlockReadConfig, 
                                  'Response': (MsgNum.ACK)}, 
    (MsgNum.I2CBlockReadQuery): {'Name': 'I2CBlockReadQuery', 'Packet': I2CBlockReadQuery, 
@@ -1664,12 +1533,6 @@ printDict = {(MsgNum.ACK): {'Name': 'ACK', 'Packet': ACK,
                                  'Response': (MsgNum.ACK)}, 
    (MsgNum.IMUBlockReadQuery): {'Name': 'IMUBlockReadQuery', 'Packet': IMUBlockReadQuery, 
                                 'Response': (RespNum.IMUBlockReadQuery_RSP)}, 
-   (MsgNum.GetBulkMotorData): {'Name': 'GetBulkMotorData', 'Packet': GetBulkMotorData, 
-                               'Response': (RespNum.GetBulkMotorData_RSP)}, 
-   (MsgNum.GetBulkADCData): {'Name': 'GetBulkADCData', 'Packet': GetBulkADCData, 
-                             'Response': (RespNum.GetBulkADCData_RSP)}, 
-   (MsgNum.GetBulkServoData): {'Name': 'GetBulkServoData', 'Packet': GetBulkServoData, 
-                               'Response': (RespNum.GetBulkServoData_RSP)}, 
    (RespNum.GetModuleStatus_RSP): {'Name': 'GetModuleStatus_RSP', 'Packet': GetModuleStatus_RSP, 
                                    'Response': None}, 
    (RespNum.QueryInterface_RSP): {'Name': 'QueryInterface_RSP', 'Packet': QueryInterface_RSP, 
@@ -1728,15 +1591,7 @@ printDict = {(MsgNum.ACK): {'Name': 'ACK', 'Packet': ACK,
                                     'Response': None}, 
    (RespNum.ReadVersionString_RSP): {'Name': 'ReadVersionString_RSP', 'Packet': ReadVersionString_RSP, 
                                      'Response': None}, 
-   (RespNum.GetBulkPIDData_RSP): {'Name': 'GetBulkPIDData_RSP', 'Packet': GetBulkPIDData_RSP, 
-                                  'Response': None}, 
    (RespNum.I2CBlockReadQuery_RSP): {'Name': 'I2CBlockReadQuery_RSP', 'Packet': I2CBlockReadQuery_RSP, 
                                      'Response ': None}, 
    (RespNum.IMUBlockReadQuery_RSP): {'Name': 'IMUBlockReadQuery_RSP', 'Packet': IMUBlockReadQuery_RSP, 
-                                     'Response ': None}, 
-   (RespNum.GetBulkMotorData_RSP): {'Name': 'GetBulkMotorData_RSP', 'Packet': GetBulkMotorData_RSP, 
-                                    'Response ': None}, 
-   (RespNum.GetBulkADCData_RSP): {'Name': 'GetBulkADCData_RSP', 'Packet': GetBulkADCData_RSP, 
-                                  'Response ': None}, 
-   (RespNum.GetBulkServoData_RSP): {'Name': 'GetBulkServoData_RSP', 'Packet': GetBulkServoData_RSP, 
-                                    'Response ': None}}
+                                     'Response ': None}}

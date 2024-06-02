@@ -579,7 +579,7 @@ class IMU(I2CDevice):
         self.writeMultipleBytes(2, register + (value << 8))
 
     def getRegisterValue(self, register):
-        """Get the IMU register value"""
+        """Get an IMU register value"""
         self.writeByte(register)
         return self.readByte()
 

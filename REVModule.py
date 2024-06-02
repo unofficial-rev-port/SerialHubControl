@@ -132,12 +132,3 @@ class Module:
 
     def getIMUBlockReadConfig(self):
         return REVI2C.imuBlockReadQuery(self.address)
-
-    def getBulkMotorData(self):
-        return self.commObj.getBulkMotorData(self.address)
-
-    def getBulkADCData(self):
-        return self.commObj.getBulkADCData(self.address)
-
-    def getBulkServoData(self):
-        return self.commObj.getBulkServoData(self.address)

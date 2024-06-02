@@ -128,12 +128,6 @@ def getMotorPIDCoefficients(commObj, destination, motorChannel, mode):
     return (
      p, i, d)
 
-def getBulkPIDData(commObj, destination, motorChannel):
-    getBulkPIDDataMsg = REVMsg.GetBulkPIDData()
-    getBulkPIDDataMsg.payload.motorChannel = motorChannel
-    packet = commObj.sendAndReceive(getBulkPIDDataMsg, destination)
-    return packet
-
 def setVelocityPIDCoefficients(commObj, destination, motorChannel, p, i, d):
     setMotorPIDCoefficients(commObj, destination, motorChannel, 1, p, i, d)
 
@@ -241,9 +235,6 @@ class Motor:
 
     def getPositionPID(self):
         return getPositionPIDCoefficients(self.commObj, self.destinationModule, self.channel)
-
-    def getBulkPIDData(self):
-        return getBulkPIDData(self.commObj, self.destinationModule, self.channel)
 
     def init(self):
         self.setMode(0, 1)

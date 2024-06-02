@@ -291,21 +291,3 @@ class REVcomm:
         readVersionStringMsg = REVMsg.ReadVersionString()
         packet = self.sendAndReceive(readVersionStringMsg, destination)
         return packet.payload.versionString
-
-    def getBulkMotorData(self, destination):
-        """Bulkread but only Motors"""
-        getBulkMotorDataMsg = REVMsg.GetBulkMotorData()
-        packet = self.sendAndReceive(getBulkMotorDataMsg, destination)
-        return packet
-
-    def getBulkADCData(self, destination):
-        """Bulkread but only ADC"""
-        getBulkADCDataMsg = REVMsg.GetBulkADCData()
-        packet = self.sendAndReceive(getBulkADCDataMsg, destination)
-        return packet
-
-    def getBulkServoData(self, destination):
-        """Bulkread but only servos? Not sure what you read from servos"""
-        getBulkServoDataMsg = REVMsg.GetBulkServoData()
-        packet = self.sendAndReceive(getBulkServoDataMsg, destination)
-        return packet"
