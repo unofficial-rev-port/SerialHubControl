@@ -4,8 +4,8 @@ import binascii, serial, time
 
 #Serial Communications 
 class REVcomm:
+    """The serial communications for REV hubs"""
     def __init__(self):
-        #Setup the serial connection
         self.serialReceive_Thread = False
         self.FunctionReturnTime = 0
         self.msgNum = 1
@@ -20,11 +20,12 @@ class REVcomm:
         self.REVProcessor = serial.Serial(baudrate=460800, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
 
     def listPorts(self):
-        #list available ports
+        """list available ports"""
         REVComPorts.populateSerialPorts()
         return REVComPorts.REVPorts
 
     def openActivePort(self):
+        """Open a serial port"""
         numSerialErrors = 2
         while not self.REVProcessor.isOpen():
             self.REVProcessor.port = self.listPorts()[0].getName()
@@ -38,9 +39,11 @@ class REVcomm:
                 time.sleep(1)
 
     def closeActivePort(self):
+        """Close an active serial port"""
         self.REVProcessor.close()
 
     def sendAndReceive(self, PacketToWrite, destination):
+        """Send new packets and parse response"""
         incomingPacket = ''
         packetLength = 0
         msgNum = 0
@@ -116,7 +119,7 @@ class REVcomm:
         return True
 
     def checkResponse(self, receivedPacket, PacketToWrite):
-        #Check for valid response
+        """Check for valid response packet"""
         packetType = int(receivedPacket.header.packetType)
         data = PacketToWrite.header.packetType.data >> 8 | PacketToWrite.header.packetType.data % 256 << 8
         responseExpected = REVMsg.printDict[data]['Response']
@@ -140,6 +143,7 @@ class REVcomm:
                 return False
 
     def checkPacket(self, incomingPacket, receivedChkSum):
+        """Check for valid checksum"""
         calcChkSum = 0
         for bytePointer in range(0, len(incomingPacket) - 2, 2):
             calcChkSum += int(incomingPacket[bytePointer:bytePointer + 2], 16)
@@ -148,6 +152,7 @@ class REVcomm:
         return (receivedChkSum == calcChkSum, receivedChkSum, calcChkSum)
 
     def processPacket(self, incomingPacket):
+        """Parse a incoming packet"""
         packetLength = int(self.swapEndianess(incomingPacket[REVMsg.REVPacket.LengthIndex_Start:REVMsg.REVPacket.LengthIndex_End]), 16)
         packetDest = int(incomingPacket[REVMsg.REVPacket.DestinationIndex_Start:REVMsg.REVPacket.DestinationIndex_End], 16)
         packetSrc = int(incomingPacket[REVMsg.REVPacket.SourceIndex_Start:REVMsg.REVPacket.SourceIndex_End], 16)
@@ -172,6 +177,7 @@ class REVcomm:
         return newPacket
 
     def swapEndianess(self, bytes):
+        """Swap bytes for packets"""
         swappedBytes = ''
         for bytePointer in range(0, len(bytes), 2):
             thisByte = bytes[bytePointer:bytePointer + 2]
@@ -179,25 +185,30 @@ class REVcomm:
         return swappedBytes
 
     def getModuleStatus(self, destination):
+        """Get the status for a Lynx module"""
         getModuleStatusMsg = REVMsg.GetModuleStatus()
         getModuleStatusMsg.payload.clearStatus = 1
         packet = self.sendAndReceive(getModuleStatusMsg, destination)
         return packet.payload.motorAlerts
 
     def keepAlive(self, destination):
+        """Send keep alive packet"""
         keepAliveMsg = REVMsg.KeepAlive()
         return self.sendAndReceive(keepAliveMsg, destination)
 
     def failSafe(self, destination):
+        """Failsafe"""
         failSafeMsg = REVMsg.FailSafe()
         self.sendAndReceive(failSafeMsg, destination)
 
     def setNewModuleAddress(self, destination, moduleAddress):
+        """Set a new lynx module address """
         setNewModuleAddressMsg = REVMsg.SetNewModuleAddress()
         setNewModuleAddressMsg.payload.moduleAddress = moduleAddress
         self.sendAndReceive(setNewModuleAddressMsg, destination)
 
     def queryInterface(self, destination, interfaceName):
+        """Query interface"""
         queryInterfaceMsg = REVMsg.QueryInterface()
         queryInterfaceMsg.payload.interfaceName = interfaceName
         packet = self.sendAndReceive(queryInterfaceMsg, destination)
@@ -205,6 +216,7 @@ class REVcomm:
          packet.payload.packetID, packet.numValues)
 
     def setModuleLEDColor(self, destination, redPower, greenPower, bluePower):
+        """Set the color of the LED on a lynx modle from RGB"""
         setModuleLEDColorMsg = REVMsg.SetModuleLEDColor()
         setModuleLEDColorMsg.payload.redPower = redPower
         setModuleLEDColorMsg.payload.greenPower = greenPower
@@ -212,30 +224,34 @@ class REVcomm:
         self.sendAndReceive(setModuleLEDColorMsg, destination)
 
     def getModuleLEDColor(self, destination):
+        """Read the set RGB of lynx module LED"""
         getModuleLEDColorMsg = REVMsg.GetModuleLEDColor()
         packet = self.sendAndReceive(getModuleLEDColorMsg, destination)
         return (
          packet.payload.redPower, packet.payload.greenPower, packet.payload.bluePower)
 
     def setModuleLEDPattern(self, destination, stepArray):
+        """Set a patern for lynx LED"""
         setModuleLEDPatternMsg = REVMsg.SetModuleLEDPattern()
         for i, step in enumerate(stepArray.patt):
             setattr(setModuleLEDPatternMsg.payload, ('rgbtStep{}').format(i), step)  
         self.sendAndReceive(setModuleLEDPatternMsg, destination)
 
     def getModuleLEDPattern(self, destination):
+        """Read module LED patern"""
         getModuleLEDPatternMsg = REVMsg.GetModuleLEDPattern()
         packet = self.sendAndReceive(getModuleLEDPatternMsg, destination)
         return packet
 
     def debugLogLevel(self, destination, groupNumber, verbosityLevel):
+        """Debug log level"""
         debugLogLevelMsg = REVMsg.DebugLogLevel()
         debugLogLevelMsg.payload.groupNumber = groupNumber
         debugLogLevelMsg.payload.verbosityLevel = verbosityLevel
         self.sendAndReceive(debugLogLevelMsg, destination)
 
     def discovery(self):
-        #Discover Connected modules
+        """Discover Connected lynx modules"""
         self.discovered = REVMsg.Discovery()
         packets = self.sendAndReceive(self.discovered, 255)
         REVModules = []
@@ -246,48 +262,50 @@ class REVcomm:
         return REVModules
 
     def getBulkInputData(self, destination):
-        #analgous to bulkreads in the sdk
+        """Get bulk data; Analgous to the FTC SDK Bulkread"""
         getBulkInputDataMsg = REVMsg.GetBulkInputData()
         packet = self.sendAndReceive(getBulkInputDataMsg, destination)
         return packet
 
     def phoneChargeControl(self, destination, enable):
-        #seems to be able to charge connected android phone somehow? not sure how this even works
+        """seems to be able to charge connected android phone somehow? not sure how this even works"""
         phoneChargeControlMsg = REVMsg.PhoneChargeControl()
         phoneChargeControlMsg.payload.enable = enable
         self.sendAndReceive(phoneChargeControlMsg, destination)
 
     def phoneChargeQuery(self, destination):
+        """See if connected android phone is being charged"""
         phoneChargeQueryMsg = REVMsg.PhoneChargeQuery()
         packet = self.sendAndReceive(phoneChargeQueryMsg, destination)
         return packet.payload.enable
 
     def injectDataLogHint(self, destination, length, hintText):
+        """Inject Data log hint text"""
         injectDataLogHintMsg = REVMsg.InjectDataLogHint()
         injectDataLogHintMsg.payload.length = length
         injectDataLogHintMsg.payload.hintText = hintText
         self.sendAndReceive(injectDataLogHintMsg, destination)
 
     def readVersionString(self, destination):
-        #used to read the firmware version
+        """used to read the firmware version"""
         readVersionStringMsg = REVMsg.ReadVersionString()
         packet = self.sendAndReceive(readVersionStringMsg, destination)
         return packet.payload.versionString
 
     def getBulkMotorData(self, destination):
-        #Halfassed bulkread?
+        """Bulkread but only Motors"""
         getBulkMotorDataMsg = REVMsg.GetBulkMotorData()
         packet = self.sendAndReceive(getBulkMotorDataMsg, destination)
         return packet
 
     def getBulkADCData(self, destination):
-        #also halfassed 
+        """Bulkread but only ADC"""
         getBulkADCDataMsg = REVMsg.GetBulkADCData()
         packet = self.sendAndReceive(getBulkADCDataMsg, destination)
         return packet
 
     def getBulkServoData(self, destination):
-        #reading servos?
+        """Bulkread but only servos? Not sure what you read from servos"""
         getBulkServoDataMsg = REVMsg.GetBulkServoData()
         packet = self.sendAndReceive(getBulkServoDataMsg, destination)
-        return packet
+        return packet"
