@@ -83,7 +83,7 @@ class Servo:
 
     def enable(self):
         """Enable the servo"""
-        errorCode = setServoEnable(self.commObj, self.destinationModule, self.channel, 1)
+        setServoEnable(self.commObj, self.destinationModule, self.channel, 1)
 
     def disable(self):
         """Disable the servo"""
