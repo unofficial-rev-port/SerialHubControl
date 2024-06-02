@@ -37,6 +37,7 @@ class REV2mSensor(I2CDevice):
         return True
 
     def initialize(self):
+        """Init color sensor"""
         self.writeRegister(136, 0)
         self.writeRegister(128, 1)
         self.writeRegister(255, 1)
@@ -223,6 +224,7 @@ class REV2mSensor(I2CDevice):
         return True
 
     def setMeasurementTimingBudget(self, budget_us):
+        """Set how long is allowed to measure"""
         StartOverhead = 1320
         EndOverhead = 960
         MsrcOverhead = 660
@@ -257,6 +259,7 @@ class REV2mSensor(I2CDevice):
         return True
 
     def getMeasurementTimingBudget(self):
+        """Get what timing budget was set"""
         StartOverhead = 1910
         EndOverhead = 960
         MsrcOverhead = 660
@@ -298,6 +301,7 @@ class REV2mSensor(I2CDevice):
         final_range_us = 0.0
 
     def getSequenceStepEnables(self):
+        """Appears to enable the sequence steps as they happen"""
         sequence_config = self.readRegister(self._SYSTEM_SEQUENCE_CONFIG)
         enables = self.SequenceStepEnables()
         enables.tcc = False
@@ -318,6 +322,7 @@ class REV2mSensor(I2CDevice):
         return enables
 
     def getSequenceStepTimeouts(self, enables):
+        """Get timeouts for Sequence Steps"""
         timeouts = self.SequenceStepTimeouts()
         timeouts.pre_range_vcsel_period_pclks = self.getVcselPulsePeriod(VcselPeriodPreRange)
         timeouts.msrc_dss_tcc_mclks = self.readRegister(self._MSRC_CONFIG_TIMEOUT_MACROP) + 1
@@ -332,9 +337,11 @@ class REV2mSensor(I2CDevice):
         return timeouts
 
     def decodeTimeout(self, reg_val):
+        """Decode timeout mclks to a byte"""
         return ((reg_val & 255) << ((reg_val & 65280) >> 8)) + 1
 
     def getVcselPulsePeriod(self, vcselPeriodType):
+        """Get Vcsel Pulse period"""
         if vcselPeriodType == VcselPeriodPreRange:
             return self.decodeVcselPeriod(self.readRegister(self._PRE_RANGE_CONFIG_VCSEL_PERIOD))
         else:
@@ -343,22 +350,27 @@ class REV2mSensor(I2CDevice):
             return 255
 
     def decodeVcselPeriod(self, reg_val):
+        """Decode Vcsel period"""
         val = reg_val + 1 << 1
         return val
 
     def timeoutMclksToMicroseconds(self, timeout_period_mclks, vcsel_period_pclks):
+        """Convert timeout mclks to microseconds"""
         macro_period_ns = self.calcMacroPeriod(vcsel_period_pclks)
         return (timeout_period_mclks * macro_period_ns + macro_period_ns / 2) / 1000
 
     def calcMacroPeriod(self, vcsel_period_pclks):
+        """Calculate macro period"""
         val = (2304 * vcsel_period_pclks * 1655 + 500) / 1000
         return val
 
     def timeoutMicrosecondsToMclks(self, timeout_period_us, vcsel_period_pclks):
+        """Convert timeout us to mclks"""
         macro_period_ns = self.calcMacroPeriod(vcsel_period_pclks)
         return (timeout_period_us * 1000 + macro_period_ns / 2) / macro_period_ns
 
     def encodeTimeout(self, timeout_mclks):
+        """Encoder Timeout mclks as a byte"""
         ls_byte = 0
         ms_byte = 0
         if timeout_mclks > 0:
@@ -372,12 +384,14 @@ class REV2mSensor(I2CDevice):
             return 0
 
     def performSingleRefCalibration(self, vhv_init_byte):
+        """Calibration"""
         self.writeRegister(self._SYSRANGE_START, 1 | vhv_init_byte)
         self.writeRegister(self._SYSTEM_INTERRUPT_CLEAR, 1)
         self.writeRegister(self._SYSRANGE_START, 0)
         return True
 
     def startContinuous(self, period_ms=0):
+        """Start Continuious reading"""
         self.writeRegister(128, 1)
         self.writeRegister(255, 1)
         self.writeRegister(0, 0)
@@ -395,6 +409,7 @@ class REV2mSensor(I2CDevice):
             self.writeRegister(self._SYSRANGE_START, 2)
 
     def stopContinuous(self):
+        """Stop continuious reading"""
         self.writeRegister(self._SYSRANGE_START, 1)
         self.writeRegister(255, 1)
         self.writeRegister(0, 0)
@@ -404,12 +419,15 @@ class REV2mSensor(I2CDevice):
         self._debugPrint('Stopping Continuous Read!')
 
     def setTimeout(self, timeout):
+        """Set Timeout"""
         self._io_timeout = timeout
 
     def getTimeout(self):
+        """Returns set timeout value"""
         return self._io_timeout
 
     def readRangeContinuousMillimeters(self):
+        """Reads the sensed range in Millimeters"""
         if self._io_timeout > 0:
             self._ioElapsedTime = 0
         start_time = time.time()
@@ -431,6 +449,7 @@ class REV2mSensor(I2CDevice):
     _io_timeout = 0
 
     def readRegister(self, addr, numBytes=1):
+        """Reads I2C register"""
         self.writeByte(addr)
         if numBytes == 1:
             return self.readByte()
@@ -440,9 +459,11 @@ class REV2mSensor(I2CDevice):
             return retval
 
     def writeRegister(self, register, value):
+        """Writes to I2C Register"""
         self.writeMultipleBytes(2, register + (value << 8))
 
     def writeShort(self, register, short):
+        """Writes a short to I2C"""
         tmp = short
         self.writeMultipleBytes(3, register + (tmp << 16))
 
@@ -506,7 +527,7 @@ class REV2mSensor(I2CDevice):
     _ALGO_PHASECAL_LIM = 48
     _ALGO_PHASECAL_CONFIG_TIMEOUT = 48
 
-
+#Just shows the distance if this is run as a script
 if __name__ == '__main__':
     commMod = REVComm.REVcomm()
     commMod.openActivePort()
