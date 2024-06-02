@@ -10,9 +10,11 @@ class comPort:
         self.name = name
 
     def getSN(self):
+        """Get the serial number of a connected port"""
         return self.sn
 
     def getNumber(self):
+        """Get the number for connected module (?)"""
         num = re.findall('\\d+', self.name)
         return num[-1]
 
@@ -20,8 +22,8 @@ class comPort:
         return self.name
 
 
-##Note: serial number stuff? may be causing issues for fw update
 def getPorts():
+    """Get the USB comm ports (?)"""
     comPorts = []
     device_list = list_ports.comports()
     for usbDevice in device_list:
@@ -32,11 +34,11 @@ def getPorts():
                     serialNumber = section[4:]
                     deviceName = usbDevice.device
                     comPorts.append(comPort(serialNumber, deviceName))
-
     return comPorts
 
 
 def populateSerialPorts():
+    """Populate available ports"""
     global REVPorts
     global serialPorts
     serialPorts = getPorts()
