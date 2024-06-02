@@ -1,27 +1,3 @@
-PAYLOAD_MAX_SIZE = 128
-
-class LEDColor:
-    Red = 0
-    Yellow = 1
-    Green = 2
-
-class ADCChannel:
-    ADC_0 = 0
-    ADC_1 = 1
-    ADC_2 = 2
-    ADC_3 = 3
-    ADC_GPIO = 4
-    ADC_I2C = 5
-    ADC_Servo = 6
-    ADC_Battery = 7
-    ADC_Motor0 = 8
-    ADC_Motor1 = 9
-    ADC_Motor2 = 10
-    ADC_Motor3 = 11
-    ADC_5VMonitor = 12
-    ADC_BatteryMonitor = 13
-    ADC_CPUTemp = 14
-
 class REVBytes:
     creationCounter = 0
 
@@ -879,114 +855,6 @@ class IMUBlockReadQuery_RSP_Payload(REVPayload):
         self.numberOfBytes = REVBytes(1)
         self.readInterval_ms = REVBytes(1)
 
-class MsgNum:
-    ACK = 32513
-    NACK = 32514
-    GetModuleStatus = 32515
-    KeepAlive = 32516
-    FailSafe = 32517
-    SetNewModuleAddress = 32518
-    QueryInterface = 32519
-    StartProgramDownload = 32520
-    ProgramDownloadChunk = 32521
-    SetModuleLEDColor = 32522
-    GetModuleLEDColor = 32523
-    SetModuleLEDPattern = 32524
-    GetModuleLEDPattern = 32525
-    DebugLogLevel = 32526
-    Discovery = 32527
-    DekaInterfacePrefix = 4096
-    GetBulkInputData = DekaInterfacePrefix + 0
-    SetSingleDIOOutput = DekaInterfacePrefix + 1
-    SetAllDIOOutputs = DekaInterfacePrefix + 2
-    SetDIODirection = DekaInterfacePrefix + 3
-    GetDIODirection = DekaInterfacePrefix + 4
-    GetSingleDIOInput = DekaInterfacePrefix + 5
-    GetAllDIOInputs = DekaInterfacePrefix + 6
-    GetADC = DekaInterfacePrefix + 7
-    SetMotorChannelMode = DekaInterfacePrefix + 8
-    GetMotorChannelMode = DekaInterfacePrefix + 9
-    SetMotorChannelEnable = DekaInterfacePrefix + 10
-    GetMotorChannelEnable = DekaInterfacePrefix + 11
-    SetMotorChannelCurrentAlertLevel = DekaInterfacePrefix + 12
-    GetMotorChannelCurrentAlertLevel = DekaInterfacePrefix + 13
-    ResetMotorEncoder = DekaInterfacePrefix + 14
-    SetMotorConstantPower = DekaInterfacePrefix + 15
-    GetMotorConstantPower = DekaInterfacePrefix + 16
-    SetMotorTargetVelocity = DekaInterfacePrefix + 17
-    GetMotorTargetVelocity = DekaInterfacePrefix + 18
-    SetMotorTargetPosition = DekaInterfacePrefix + 19
-    GetMotorTargetPosition = DekaInterfacePrefix + 20
-    GetMotorAtTarget = DekaInterfacePrefix + 21
-    GetMotorEncoderPosition = DekaInterfacePrefix + 22
-    SetMotorPIDCoefficients = DekaInterfacePrefix + 23
-    GetMotorPIDCoefficients = DekaInterfacePrefix + 24
-    SetPWMConfiguration = DekaInterfacePrefix + 25
-    GetPWMConfiguration = DekaInterfacePrefix + 26
-    SetPWMPulseWidth = DekaInterfacePrefix + 27
-    GetPWNPulseWidth = DekaInterfacePrefix + 28
-    SetPWMEnable = DekaInterfacePrefix + 29
-    GetPWMEnable = DekaInterfacePrefix + 30
-    SetServoConfiguration = DekaInterfacePrefix + 31
-    GetServoConfiguration = DekaInterfacePrefix + 32
-    SetServoPulseWidth = DekaInterfacePrefix + 33
-    GetServoPulseWidth = DekaInterfacePrefix + 34
-    SetServoEnable = DekaInterfacePrefix + 35
-    GetServoEnable = DekaInterfacePrefix + 36
-    I2CWriteSingleByte = DekaInterfacePrefix + 37
-    I2CWriteMultipleBytes = DekaInterfacePrefix + 38
-    I2CReadSingleByte = DekaInterfacePrefix + 39
-    I2CReadMultipleBytes = DekaInterfacePrefix + 40
-    I2CReadStatusQuery = DekaInterfacePrefix + 41
-    I2CWriteStatusQuery = DekaInterfacePrefix + 42
-    I2CConfigureChannel = DekaInterfacePrefix + 43
-    PhoneChargeControl = DekaInterfacePrefix + 44
-    PhoneChargeQuery = DekaInterfacePrefix + 45
-    InjectDataLogHint = DekaInterfacePrefix + 46
-    I2CConfigureQuery = DekaInterfacePrefix + 47
-    ReadVersionString = DekaInterfacePrefix + 48
-    I2CBlockReadConfig = DekaInterfacePrefix + 50
-    I2CBlockReadQuery = DekaInterfacePrefix + 51
-    I2CWriteReadMultipleBytes = DekaInterfacePrefix + 52
-    IMUBlockReadConfig = DekaInterfacePrefix + 53
-    IMUBlockReadQuery = DekaInterfacePrefix + 54
-
-RESPONSE_BIT = 32768
-
-class RespNum:
-    GetModuleStatus_RSP = RESPONSE_BIT | MsgNum.GetModuleStatus
-    QueryInterface_RSP = RESPONSE_BIT | MsgNum.QueryInterface
-    GetModuleLEDColor_RSP = RESPONSE_BIT | MsgNum.GetModuleLEDColor
-    GetModuleLEDPattern_RSP = RESPONSE_BIT | MsgNum.GetModuleLEDPattern
-    Discovery_RSP = RESPONSE_BIT | MsgNum.Discovery
-    GetBulkInputData_RSP = RESPONSE_BIT | MsgNum.GetBulkInputData
-    GetDIODirection_RSP = RESPONSE_BIT | MsgNum.GetDIODirection
-    GetSingleDIOInput_RSP = RESPONSE_BIT | MsgNum.GetSingleDIOInput
-    GetAllDIOInputs_RSP = RESPONSE_BIT | MsgNum.GetAllDIOInputs
-    GetADC_RSP = RESPONSE_BIT | MsgNum.GetADC
-    GetMotorChannelMode_RSP = RESPONSE_BIT | MsgNum.GetMotorChannelMode
-    GetMotorChannelEnable_RSP = RESPONSE_BIT | MsgNum.GetMotorChannelEnable
-    GetMotorChannelCurrentAlertLevel_RSP = RESPONSE_BIT | MsgNum.GetMotorChannelCurrentAlertLevel
-    GetMotorConstantPower_RSP = RESPONSE_BIT | MsgNum.GetMotorConstantPower
-    GetMotorTargetVelocity_RSP = RESPONSE_BIT | MsgNum.GetMotorTargetVelocity
-    GetMotorTargetPosition_RSP = RESPONSE_BIT | MsgNum.GetMotorTargetPosition
-    GetMotorAtTarget_RSP = RESPONSE_BIT | MsgNum.GetMotorAtTarget
-    GetMotorEncoderPosition_RSP = RESPONSE_BIT | MsgNum.GetMotorEncoderPosition
-    GetMotorPIDCoefficients_RSP = RESPONSE_BIT | MsgNum.GetMotorPIDCoefficients
-    GetPWMConfiguration_RSP = RESPONSE_BIT | MsgNum.GetPWMConfiguration
-    GetPWNPulseWidth_RSP = RESPONSE_BIT | MsgNum.GetPWNPulseWidth
-    GetPWMEnable_RSP = RESPONSE_BIT | MsgNum.GetPWMEnable
-    GetServoConfiguration_RSP = RESPONSE_BIT | MsgNum.GetServoConfiguration
-    GetServoPulseWidth_RSP = RESPONSE_BIT | MsgNum.GetServoPulseWidth
-    GetServoEnable_RSP = RESPONSE_BIT | MsgNum.GetServoEnable
-    I2CReadStatusQuery_RSP = RESPONSE_BIT | MsgNum.I2CReadStatusQuery
-    I2CWriteStatusQuery_RSP = RESPONSE_BIT | MsgNum.I2CWriteStatusQuery
-    PhoneChargeQuery_RSP = RESPONSE_BIT | MsgNum.PhoneChargeQuery
-    I2CConfigureQuery_RSP = RESPONSE_BIT | MsgNum.I2CConfigureQuery
-    ReadVersionString_RSP = RESPONSE_BIT | MsgNum.ReadVersionString
-    I2CBlockReadQuery_RSP = RESPONSE_BIT | MsgNum.I2CBlockReadQuery
-    IMUBlockReadQuery_RSP = RESPONSE_BIT | MsgNum.IMUBlockReadQuery
-
 class ACK(REVPacket):
     def __init__(self):
         REVPacket.__init__(self, REVHeader(Cmd=MsgNum.ACK), ACK_Payload())
@@ -1394,6 +1262,138 @@ class I2CBlockReadQuery_RSP(REVPacket):
 class IMUBlockReadQuery_RSP(REVPacket):
     def __init__(self):
         REVPacket.__init__(self, REVHeader(Cmd=RespNum.IMUBlockReadQuery_RSP), IMUBlockReadQuery_RSP_Payload())
+
+#Constants for messages
+PAYLOAD_MAX_SIZE = 128
+RESPONSE_BIT = 32768
+
+class LEDColor:
+    Red = 0
+    Yellow = 1
+    Green = 2
+
+class ADCChannel:
+    ADC_0 = 0
+    ADC_1 = 1
+    ADC_2 = 2
+    ADC_3 = 3
+    ADC_GPIO = 4
+    ADC_I2C = 5
+    ADC_Servo = 6
+    ADC_Battery = 7
+    ADC_Motor0 = 8
+    ADC_Motor1 = 9
+    ADC_Motor2 = 10
+    ADC_Motor3 = 11
+    ADC_5VMonitor = 12
+    ADC_BatteryMonitor = 13
+    ADC_CPUTemp = 14
+    
+class MsgNum:
+    ACK = 32513
+    NACK = 32514
+    GetModuleStatus = 32515
+    KeepAlive = 32516
+    FailSafe = 32517
+    SetNewModuleAddress = 32518
+    QueryInterface = 32519
+    StartProgramDownload = 32520
+    ProgramDownloadChunk = 32521
+    SetModuleLEDColor = 32522
+    GetModuleLEDColor = 32523
+    SetModuleLEDPattern = 32524
+    GetModuleLEDPattern = 32525
+    DebugLogLevel = 32526
+    Discovery = 32527
+    DekaInterfacePrefix = 4096
+    GetBulkInputData = DekaInterfacePrefix + 0
+    SetSingleDIOOutput = DekaInterfacePrefix + 1
+    SetAllDIOOutputs = DekaInterfacePrefix + 2
+    SetDIODirection = DekaInterfacePrefix + 3
+    GetDIODirection = DekaInterfacePrefix + 4
+    GetSingleDIOInput = DekaInterfacePrefix + 5
+    GetAllDIOInputs = DekaInterfacePrefix + 6
+    GetADC = DekaInterfacePrefix + 7
+    SetMotorChannelMode = DekaInterfacePrefix + 8
+    GetMotorChannelMode = DekaInterfacePrefix + 9
+    SetMotorChannelEnable = DekaInterfacePrefix + 10
+    GetMotorChannelEnable = DekaInterfacePrefix + 11
+    SetMotorChannelCurrentAlertLevel = DekaInterfacePrefix + 12
+    GetMotorChannelCurrentAlertLevel = DekaInterfacePrefix + 13
+    ResetMotorEncoder = DekaInterfacePrefix + 14
+    SetMotorConstantPower = DekaInterfacePrefix + 15
+    GetMotorConstantPower = DekaInterfacePrefix + 16
+    SetMotorTargetVelocity = DekaInterfacePrefix + 17
+    GetMotorTargetVelocity = DekaInterfacePrefix + 18
+    SetMotorTargetPosition = DekaInterfacePrefix + 19
+    GetMotorTargetPosition = DekaInterfacePrefix + 20
+    GetMotorAtTarget = DekaInterfacePrefix + 21
+    GetMotorEncoderPosition = DekaInterfacePrefix + 22
+    SetMotorPIDCoefficients = DekaInterfacePrefix + 23
+    GetMotorPIDCoefficients = DekaInterfacePrefix + 24
+    SetPWMConfiguration = DekaInterfacePrefix + 25
+    GetPWMConfiguration = DekaInterfacePrefix + 26
+    SetPWMPulseWidth = DekaInterfacePrefix + 27
+    GetPWNPulseWidth = DekaInterfacePrefix + 28
+    SetPWMEnable = DekaInterfacePrefix + 29
+    GetPWMEnable = DekaInterfacePrefix + 30
+    SetServoConfiguration = DekaInterfacePrefix + 31
+    GetServoConfiguration = DekaInterfacePrefix + 32
+    SetServoPulseWidth = DekaInterfacePrefix + 33
+    GetServoPulseWidth = DekaInterfacePrefix + 34
+    SetServoEnable = DekaInterfacePrefix + 35
+    GetServoEnable = DekaInterfacePrefix + 36
+    I2CWriteSingleByte = DekaInterfacePrefix + 37
+    I2CWriteMultipleBytes = DekaInterfacePrefix + 38
+    I2CReadSingleByte = DekaInterfacePrefix + 39
+    I2CReadMultipleBytes = DekaInterfacePrefix + 40
+    I2CReadStatusQuery = DekaInterfacePrefix + 41
+    I2CWriteStatusQuery = DekaInterfacePrefix + 42
+    I2CConfigureChannel = DekaInterfacePrefix + 43
+    PhoneChargeControl = DekaInterfacePrefix + 44
+    PhoneChargeQuery = DekaInterfacePrefix + 45
+    InjectDataLogHint = DekaInterfacePrefix + 46
+    I2CConfigureQuery = DekaInterfacePrefix + 47
+    ReadVersionString = DekaInterfacePrefix + 48
+    I2CBlockReadConfig = DekaInterfacePrefix + 50
+    I2CBlockReadQuery = DekaInterfacePrefix + 51
+    I2CWriteReadMultipleBytes = DekaInterfacePrefix + 52
+    IMUBlockReadConfig = DekaInterfacePrefix + 53
+    IMUBlockReadQuery = DekaInterfacePrefix + 54
+
+class RespNum:
+    GetModuleStatus_RSP = RESPONSE_BIT | MsgNum.GetModuleStatus
+    QueryInterface_RSP = RESPONSE_BIT | MsgNum.QueryInterface
+    GetModuleLEDColor_RSP = RESPONSE_BIT | MsgNum.GetModuleLEDColor
+    GetModuleLEDPattern_RSP = RESPONSE_BIT | MsgNum.GetModuleLEDPattern
+    Discovery_RSP = RESPONSE_BIT | MsgNum.Discovery
+    GetBulkInputData_RSP = RESPONSE_BIT | MsgNum.GetBulkInputData
+    GetDIODirection_RSP = RESPONSE_BIT | MsgNum.GetDIODirection
+    GetSingleDIOInput_RSP = RESPONSE_BIT | MsgNum.GetSingleDIOInput
+    GetAllDIOInputs_RSP = RESPONSE_BIT | MsgNum.GetAllDIOInputs
+    GetADC_RSP = RESPONSE_BIT | MsgNum.GetADC
+    GetMotorChannelMode_RSP = RESPONSE_BIT | MsgNum.GetMotorChannelMode
+    GetMotorChannelEnable_RSP = RESPONSE_BIT | MsgNum.GetMotorChannelEnable
+    GetMotorChannelCurrentAlertLevel_RSP = RESPONSE_BIT | MsgNum.GetMotorChannelCurrentAlertLevel
+    GetMotorConstantPower_RSP = RESPONSE_BIT | MsgNum.GetMotorConstantPower
+    GetMotorTargetVelocity_RSP = RESPONSE_BIT | MsgNum.GetMotorTargetVelocity
+    GetMotorTargetPosition_RSP = RESPONSE_BIT | MsgNum.GetMotorTargetPosition
+    GetMotorAtTarget_RSP = RESPONSE_BIT | MsgNum.GetMotorAtTarget
+    GetMotorEncoderPosition_RSP = RESPONSE_BIT | MsgNum.GetMotorEncoderPosition
+    GetMotorPIDCoefficients_RSP = RESPONSE_BIT | MsgNum.GetMotorPIDCoefficients
+    GetPWMConfiguration_RSP = RESPONSE_BIT | MsgNum.GetPWMConfiguration
+    GetPWNPulseWidth_RSP = RESPONSE_BIT | MsgNum.GetPWNPulseWidth
+    GetPWMEnable_RSP = RESPONSE_BIT | MsgNum.GetPWMEnable
+    GetServoConfiguration_RSP = RESPONSE_BIT | MsgNum.GetServoConfiguration
+    GetServoPulseWidth_RSP = RESPONSE_BIT | MsgNum.GetServoPulseWidth
+    GetServoEnable_RSP = RESPONSE_BIT | MsgNum.GetServoEnable
+    I2CReadStatusQuery_RSP = RESPONSE_BIT | MsgNum.I2CReadStatusQuery
+    I2CWriteStatusQuery_RSP = RESPONSE_BIT | MsgNum.I2CWriteStatusQuery
+    PhoneChargeQuery_RSP = RESPONSE_BIT | MsgNum.PhoneChargeQuery
+    I2CConfigureQuery_RSP = RESPONSE_BIT | MsgNum.I2CConfigureQuery
+    ReadVersionString_RSP = RESPONSE_BIT | MsgNum.ReadVersionString
+    I2CBlockReadQuery_RSP = RESPONSE_BIT | MsgNum.I2CBlockReadQuery
+    IMUBlockReadQuery_RSP = RESPONSE_BIT | MsgNum.IMUBlockReadQuery
 
 printDict = {(MsgNum.ACK): {'Name': 'ACK', 'Packet': ACK, 
                   'Response': None}, 
