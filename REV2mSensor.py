@@ -5,43 +5,38 @@ VcselPeriodPreRange = 0
 VcselPeriodFinalRange = 1
 ##Note: appears to be partially just taken from VL53L0X docs? 
 
-#i2c REV2mSensor driver
 class REV2mSensor(I2CDevice):
+    """REV 2m Distance Sensor driver"""
     def __init__(self, commObj, channel, destinationModule, debugEnable=False):
         I2CDevice.__init__(self, commObj, channel, destinationModule, self._ADDRESS_I2C_DEFAULT)
         self._debug_enable = debugEnable
         self.setType('REV2mSensor')
 
     def _debugPrint(self, val):
-    #conditional printing
+        """Conditional printing for debug purposes"""
         if self._debug_enable == True:
             print(val)
 
     def Is2mDistanceSensor(self):
-    #Guess and check if a device is a 2m
+        """Check and guess to see if connected i2c device is a 2m"""
         def VL53L0X_check(addr, expected, numBytes=1):
             value = self.readRegister(addr, numBytes)
             if value != expected:
                 self._debugPrint('Register (' + hex(addr) + ') expected (' + hex(expected) + ') got (' + hex(value) + ')')
                 return False
             return True
-
-        status = VL53L0X_check(192, 238)
-        if status == False:
+ 
+        if VL53L0X_check(192, 238) == False:
             return False
-        status = VL53L0X_check(193, 170)
-        if status == False:
+        if VL53L0X_check(193, 170) == False:
             return False
-        status = VL53L0X_check(194, 16)
-        if status == False:
+        if VL53L0X_check(194, 16) == False:
             return False
-        status = VL53L0X_check(97, 0, 2)
-        if status == False:
+        if VL53L0X_check(97, 0, 2) == False:
             return False
         return True
 
     def initialize(self):
-        #initialize i2c device
         self.writeRegister(136, 0)
         self.writeRegister(128, 1)
         self.writeRegister(255, 1)

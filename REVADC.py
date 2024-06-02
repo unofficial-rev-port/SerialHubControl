@@ -17,7 +17,6 @@ CONTROLLER_TEMPERATURE = 14
 
 ##Note: appears to just be part of the current sensing for motors? (ADC = analog digital converter)
 class ADCPin:
-
     def __init__(self, commObj, channel, destinationModule):
         self.commObj = commObj
         self.channel = channel
