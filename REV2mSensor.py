@@ -467,6 +467,7 @@ class REV2mSensor(I2CDevice):
         tmp = short
         self.writeMultipleBytes(3, register + (tmp << 16))
 
+    #2m Sensor constants
     _ADDRESS_I2C_DEFAULT = 41
     _SYSRANGE_START = 0
     _SYSTEM_THRESH_HIGH = 12

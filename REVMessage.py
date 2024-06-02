@@ -240,18 +240,18 @@ class REVPayload:
         return payloadMembers
 
 class REVPacket:
-    ##Packet definition
-    #0x44
-    #0x4B
-    #PacketLength
-    #PacketLength
-    #Destination Module Address
-    #Source Module Address
-    #Message Number
-    #Reference Number
-    #Packet ID
-    #Payload....
-    #Checksum
+    """Packet definition
+    0x44 (D)
+    0x4B (K)
+    PacketLength
+    PacketLength
+    Destination Module Address
+    Source Module Address
+    Message Number
+    Reference Number
+    Packet ID
+    Payload....
+    Checksum"""
 
     FrameIndex_Start = 0
     FrameIndex_End = FrameIndex_Start + 4

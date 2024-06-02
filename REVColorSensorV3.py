@@ -134,7 +134,7 @@ class REVColorSensorV3(I2CDevice):
         self.logger.debug('Writing 0x%02X 0x%02X', register, value)
         self.writeMultipleBytes(2, register & 255 | value << 8)
 
-    #Some constants
+    #Color Sensor v3 constants
     _REV_COLOR_SENSOR_ADDRESS = 82
     _REV_COLOR_SENSOR_ID = 194
     _MAIN_CTRL = 0

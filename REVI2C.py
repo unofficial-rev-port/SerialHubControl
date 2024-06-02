@@ -224,41 +224,6 @@ class I2CDevice:
         """Get the block read config for an I2C device"""
         return i2cBlockReadQuery(self.commObj, self.destinationModule)
 
-#Some constants
-COMMAND_REGISTER_BIT = 128
-SINGLE_BYTE_BIT = 0
-MULTI_BYTE_BIT = 32
-COLOR_SENSOR_ADDRESS = 57
-COLOR_SENSOR_ID = 96
-ENABLE_REGISTER = 0
-ATIME_REGISTER = 1
-WTIME_REGISTER = 3
-AILTL_REGISTER = 4
-AILTH_REGISTER = 5
-AIHTL_REGISTER = 6
-AIHTH_REGISTER = 7
-PILTL_REGISTER = 8
-PILTH_REGISTER = 9
-PIHTL_REGISTER = 10
-PIHTH_REGISTER = 11
-PERS_REGISTER = 12
-CONFIG_REGISTER = 13
-PPULSE_REGISTER = 14
-CONTROL_REGISTER = 15
-REVISION_REGISTER = 17
-ID_REGISTER = 18
-STATUS_REGISTER = 19
-CDATA_REGISTER = 20
-CDATAH_REGISTER = 21
-RDATA_REGISTER = 22
-RDATAH_REGISTER = 23
-GDATA_REGISTER = 24
-GDATAH_REGISTER = 25
-BDATA_REGISTER = 26
-BDATAH_REGISTER = 27
-PDATA_REGISTER = 28
-PDATAH_REGISTER = 29
-
 class ColorSensor(I2CDevice):
     """Color sensor I2C device type"""
     def __init__(self, commObj, channel, destinationModule):
@@ -335,7 +300,121 @@ class ColorSensor(I2CDevice):
         self.writeByte(COMMAND_REGISTER_BIT | MULTI_BYTE_BIT | register)
         return self.readMultipleBytes(2)
 
-#Some more constants
+class IMU(I2CDevice):
+    """IMU I2C device type"""
+    def __init__(self, commObj, channel, destinationModule):
+        I2CDevice.__init__(self, commObj, channel, destinationModule, IMU_ADDRESS)
+
+    def getDeviceID(self):
+        """Get the chip id of the IMU"""
+        return self.getRegisterValue(CHIP_ID)
+
+    def initSensor(self):
+        """Initialize the IMU"""
+        for _ in range(3):
+            self.setRegisterValue(OPR_MODE, CONFIGMODE)
+            self.setRegisterValue(PWR_MODE, NORMAL)
+            self.setRegisterValue(SYS_TRIGGER, 128)
+            self.setRegisterValue(PAGE_ID, 0)
+            self.setRegisterValue(UNIT_SEL, ACC_UNIT_MSS)
+            self.setRegisterValue(OPR_MODE, IMUMODE)
+            try:
+                stat = self.getRegisterValue(SYS_STAT)
+            except AttributeError:
+                stat = -1
+
+            if stat == 5:
+                break
+            time.sleep(0.1)
+
+    def getTemperature(self):
+        """Get the.. temperature sensor from the IMU"""
+        return self.getRegisterValue(TEMP)
+
+    def getGyroData_X(self):
+        """Get the X axis gyro rotation"""
+        return self.getTwoByteRegisterValue(GYR_DATA_X_LSB)
+
+    def getGyroData_Y(self):
+        """Get the Y axis gyro rotation"""
+        return self.getTwoByteRegisterValue(GYR_DATA_Y_LSB)
+
+    def getGyroData_Z(self):
+        """Get the Z axis gyro rotation"""
+        return self.getTwoByteRegisterValue(GYR_DATA_Z_LSB)
+
+    def getAccData_X(self):
+        """Get the X axis acceleration"""
+        return self.getTwoByteRegisterValue(ACC_DATA_X_LSB)
+
+    def getAccData_Y(self):
+        """Get the Y axis acceleration"""
+        return self.getTwoByteRegisterValue(ACC_DATA_Y_LSB)
+
+    def getAccData_Z(self):
+        """Get the Z axis acceleration"""
+        return self.getTwoByteRegisterValue(ACC_DATA_Z_LSB)
+
+    def getMagData_X(self):
+        """Get the X axis magnetisim"""
+        return self.getTwoByteRegisterValue(MAG_DATA_X_LSB)
+
+    def getMagData_Y(self):
+        """Get the Y axis magnetisim"""
+        return self.getTwoByteRegisterValue(MAG_DATA_Y_LSB)
+
+    def getMagData_Z(self):
+        """Get the Z axis magnetisim"""
+        return self.getTwoByteRegisterValue(MAG_DATA_Z_LSB)
+
+    def getAllEuler(self):
+        """Get all Euler values (?)"""
+        values = self.getSixByteRegisterValue(EUL_H_LSB)
+        return [360.0 * float(value) / 5760.0 for value in values]
+
+    def getGravity(self):
+        """Get the gravitational acceleration in all axis"""
+        values = self.getSixByteRegisterValue(GRV_DATA_X_LSB)
+        return [float(value) / 100 for value in values]
+
+    def getAllLinAccel(self):
+        """Get all Axis acceleration"""
+        values = self.getSixByteRegisterValue(LIA_DATA_X_LSB)
+        return [float(value) / 1000 for value in values]
+
+    def setRegisterValue(self, register, value):
+        """Set IMU register value"""
+        self.writeMultipleBytes(2, register + (value << 8))
+
+    def getRegisterValue(self, register):
+        """Get an IMU register value"""
+        self.writeByte(register)
+        return self.readByte()
+
+    def getTwoByteRegisterValue(self, register):
+        """Get a 2 byte IMU register value"""
+        self.writeByte(register)
+        val = int(self.readMultipleBytes(2))
+        bits = int(16)
+        if val & 1 << bits - 1 != 0:
+            val = val - (1 << bits)
+        return val
+
+    def getSixByteRegisterValue(self, register):
+        """Get a 6 byte IMU register value"""
+        self.writeByte(register)
+        val = int(self.readMultipleBytes(6))
+        bits = int(16)
+        values = []
+        for i in range(0, 3):
+            it_val = val & 65535
+            if it_val & 1 << bits - 1 != 0:
+                it_val = it_val - (1 << bits)
+            values.append(it_val)
+            val = val >> 16
+        return values
+
+#I2C constants
 IMU_ADDRESS = 40
 PAGE_ID = 7
 CHIP_ID = 0
@@ -491,117 +570,36 @@ GRYO_AM_THRES = 30
 GRYO_AM_SET = 31
 UNIQUE_ID_FIRST = 80
 UNIQUE_ID_LAST = 95
-
-class IMU(I2CDevice):
-    """IMU I2C device type"""
-    def __init__(self, commObj, channel, destinationModule):
-        I2CDevice.__init__(self, commObj, channel, destinationModule, IMU_ADDRESS)
-
-    def getDeviceID(self):
-        """Get the chip id of the IMU"""
-        return self.getRegisterValue(CHIP_ID)
-
-    def initSensor(self):
-        """Initialize the IMU"""
-        for _ in range(3):
-            self.setRegisterValue(OPR_MODE, CONFIGMODE)
-            self.setRegisterValue(PWR_MODE, NORMAL)
-            self.setRegisterValue(SYS_TRIGGER, 128)
-            self.setRegisterValue(PAGE_ID, 0)
-            self.setRegisterValue(UNIT_SEL, ACC_UNIT_MSS)
-            self.setRegisterValue(OPR_MODE, IMUMODE)
-            try:
-                stat = self.getRegisterValue(SYS_STAT)
-            except AttributeError:
-                stat = -1
-
-            if stat == 5:
-                break
-            time.sleep(0.1)
-
-    def getTemperature(self):
-        """Get the.. temperature sensor from the IMU"""
-        return self.getRegisterValue(TEMP)
-
-    def getGyroData_X(self):
-        """Get the X axis gyro rotation"""
-        return self.getTwoByteRegisterValue(GYR_DATA_X_LSB)
-
-    def getGyroData_Y(self):
-        """Get the Y axis gyro rotation"""
-        return self.getTwoByteRegisterValue(GYR_DATA_Y_LSB)
-
-    def getGyroData_Z(self):
-        """Get the Z axis gyro rotation"""
-        return self.getTwoByteRegisterValue(GYR_DATA_Z_LSB)
-
-    def getAccData_X(self):
-        """Get the X axis acceleration"""
-        return self.getTwoByteRegisterValue(ACC_DATA_X_LSB)
-
-    def getAccData_Y(self):
-        """Get the Y axis acceleration"""
-        return self.getTwoByteRegisterValue(ACC_DATA_Y_LSB)
-
-    def getAccData_Z(self):
-        """Get the Z axis acceleration"""
-        return self.getTwoByteRegisterValue(ACC_DATA_Z_LSB)
-
-    def getMagData_X(self):
-        """Get the X axis magnetisim"""
-        return self.getTwoByteRegisterValue(MAG_DATA_X_LSB)
-
-    def getMagData_Y(self):
-        """Get the Y axis magnetisim"""
-        return self.getTwoByteRegisterValue(MAG_DATA_Y_LSB)
-
-    def getMagData_Z(self):
-        """Get the Z axis magnetisim"""
-        return self.getTwoByteRegisterValue(MAG_DATA_Z_LSB)
-
-    def getAllEuler(self):
-        """Get all Euler values (?)"""
-        values = self.getSixByteRegisterValue(EUL_H_LSB)
-        return [360.0 * float(value) / 5760.0 for value in values]
-
-    def getGravity(self):
-        """Get the gravitational acceleration in all axis"""
-        values = self.getSixByteRegisterValue(GRV_DATA_X_LSB)
-        return [float(value) / 100 for value in values]
-
-    def getAllLinAccel(self):
-        """Get all Axis acceleration"""
-        values = self.getSixByteRegisterValue(LIA_DATA_X_LSB)
-        return [float(value) / 1000 for value in values]
-
-    def setRegisterValue(self, register, value):
-        """Set IMU register value"""
-        self.writeMultipleBytes(2, register + (value << 8))
-
-    def getRegisterValue(self, register):
-        """Get an IMU register value"""
-        self.writeByte(register)
-        return self.readByte()
-
-    def getTwoByteRegisterValue(self, register):
-        """Get a 2 byte IMU register value"""
-        self.writeByte(register)
-        val = int(self.readMultipleBytes(2))
-        bits = int(16)
-        if val & 1 << bits - 1 != 0:
-            val = val - (1 << bits)
-        return val
-
-    def getSixByteRegisterValue(self, register):
-        """Get a 6 byte IMU register value"""
-        self.writeByte(register)
-        val = int(self.readMultipleBytes(6))
-        bits = int(16)
-        values = []
-        for i in range(0, 3):
-            it_val = val & 65535
-            if it_val & 1 << bits - 1 != 0:
-                it_val = it_val - (1 << bits)
-            values.append(it_val)
-            val = val >> 16
-        return values
+COMMAND_REGISTER_BIT = 128
+SINGLE_BYTE_BIT = 0
+MULTI_BYTE_BIT = 32
+COLOR_SENSOR_ADDRESS = 57
+COLOR_SENSOR_ID = 96
+ENABLE_REGISTER = 0
+ATIME_REGISTER = 1
+WTIME_REGISTER = 3
+AILTL_REGISTER = 4
+AILTH_REGISTER = 5
+AIHTL_REGISTER = 6
+AIHTH_REGISTER = 7
+PILTL_REGISTER = 8
+PILTH_REGISTER = 9
+PIHTL_REGISTER = 10
+PIHTH_REGISTER = 11
+PERS_REGISTER = 12
+CONFIG_REGISTER = 13
+PPULSE_REGISTER = 14
+CONTROL_REGISTER = 15
+REVISION_REGISTER = 17
+ID_REGISTER = 18
+STATUS_REGISTER = 19
+CDATA_REGISTER = 20
+CDATAH_REGISTER = 21
+RDATA_REGISTER = 22
+RDATAH_REGISTER = 23
+GDATA_REGISTER = 24
+GDATAH_REGISTER = 25
+BDATA_REGISTER = 26
+BDATAH_REGISTER = 27
+PDATA_REGISTER = 28
+PDATAH_REGISTER = 29
