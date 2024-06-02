@@ -19,7 +19,7 @@ def setMotorChannelEnable(commObj, destination, motorChannel, enabled):
     setMotorChannelEnableMsg = REVMsg.SetMotorChannelEnable()
     setMotorChannelEnableMsg.payload.motorChannel = motorChannel
     setMotorChannelEnableMsg.payload.enabled = enabled
-    packet = commObj.sendAndReceive(setMotorChannelEnableMsg, destination)
+    commObj.sendAndReceive(setMotorChannelEnableMsg, destination)
 
 def getMotorChannelEnable(commObj, destination, motorChannel):
     getMotorChannelEnableMsg = REVMsg.GetMotorChannelEnable()
