@@ -43,7 +43,7 @@ def getServoEnable(commObj, destination, servoChannel):
     packet = commObj.sendAndReceive(getServoEnableMsg, destination)
     return packet.payload.enabled
 
-class Servo:
+class internalServo:
     def __init__(self, commObj, channel, destinationModule):
         self.commObj = commObj
         self.destinationModule = destinationModule

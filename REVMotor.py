@@ -151,7 +151,7 @@ def getPositionPIDCoefficients(commObj, destination, motorChannel):
     """Get motor PID coefficients for run to position"""
     return getMotorPIDCoefficients(commObj, destination, motorChannel, 2)
 
-class Motor:
+class internalMotor:
     """Motor device type"""
     def __init__(self, commObj, channel, destinationModule):
         self.channel = channel
