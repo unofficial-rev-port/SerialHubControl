@@ -216,7 +216,6 @@ class internalMotor:
         """Get motor power"""
         return getMotorConstantPower(self.commObj, self.destinationModule, self.channel)
 
-
     def setTargetVelocity(self, velocity):
         """Set motor target velocity"""
         setMotorTargetVelocity(self.commObj, self.destinationModule, self.channel, velocity)
@@ -239,8 +238,7 @@ class internalMotor:
 
     def getPosition(self):
         """Get the current encoder positon"""
-        position = getMotorEncoderPosition(self.commObj, self.destinationModule, self.channel)
-        return position
+        return getMotorEncoderPosition(self.commObj, self.destinationModule, self.channel)
 
     def resetPosition(self):
         """Reset motor encoder to zero, functionally identical to resetEncoder()"""

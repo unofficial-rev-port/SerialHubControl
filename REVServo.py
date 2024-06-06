@@ -2,14 +2,14 @@ from . import REVMessage as REVMsg
 
 ##Servo driver
 def setServoConfiguration(commObj, destination, servoChannel, framePeriod):
-    """Set configuration for a servo"""
+    """Set pwm range for a servo"""
     setServoConfigurationMsg = REVMsg.SetServoConfiguration()
     setServoConfigurationMsg.payload.servoChannel = servoChannel
     setServoConfigurationMsg.payload.framePeriod = framePeriod
     return commObj.sendAndReceive(setServoConfigurationMsg, destination)
 
 def getServoConfiguration(commObj, destination, servoChannel):
-    """Get configuration for a servo"""
+    """Get pwm range for a servo"""
     getServoConfigurationMsg = REVMsg.GetServoConfiguration()
     getServoConfigurationMsg.payload.servoChannel = servoChannel
     packet = commObj.sendAndReceive(getServoConfigurationMsg, destination)
@@ -58,11 +58,11 @@ class internalServo:
         return self.destinationModule
 
     def setChannel(self, channel):
-        """Set pulse width for servo"""
+        """Set port for servo"""
         self.channel = channel
 
     def getChannel(self):
-        """Get pulse width for servo"""
+        """Get port for servo"""
         return self.channel
 
     def setPeriod(self, period):
