@@ -3,7 +3,7 @@ from . import REVMotor, REVServo, REVADC, REVDIO, REVI2C
 ##Note: Modules are hubs (lynx modules)
 class Module:
     """Lynx Module device"""
-    def __init__(self, commObj, address, parent):
+    def __init__(self, commObj, address, parent, manualBulkread = true):
         self.commObj = commObj
         self.address = address
         self.parent = parent
@@ -12,6 +12,14 @@ class Module:
         self.i2cChannels = []
         self.adcPins = []
         self.dioPins = []
+        self.bulkInputData = null
+        self.analogInput = []
+        self.digitalInput = []
+        self.encoderPosition = []
+        self.encoderVelocity = []
+        self.motorIsOvercurrent = []
+        self.isBulkread = manualBulkread
+
 
     def init_periphs(self):
         """Initalizes all devices (Motors, Servos, Digital I/O, and ADC"""
@@ -157,4 +165,55 @@ class Module:
     def getIMUBlockReadConfig(self):
         """Get the configuration of IMU block read"""
         return REVI2C.imuBlockReadQuery(self.address)
+
+    def getBulkRead(self):
+        if self.bulkInputData not null:
+            return self.bulkInputData
+        else:
+            self.bulkInputData = getBulkData()
+            return self.bulkInputData
+
+    def invalidateBulkCache(self):
+        self.bulkInputData = null
+        self.analogInput = []
+        self.digitalInput = []
+        self.encoderPosition = []
+        self.encoderVelocity = []
+        self.motorIsOvercurrent = []
     
+    def parseBulkData(self):
+        read = getBulkRead()
+        for data in range(0,3):
+            value = 
+            self.analogInput[data] = value
+        for data in range(0,3):
+            value =
+            self.digitalInput[data] = value
+        for data in range(0,3):
+            value = 
+            self.encoderPosition[data] = value
+        for data in range(0,3):
+            value = 
+            self.encoderVelocity[data] = value
+        for data in range(0,3):
+            value =
+            self.motorIsOvercurrent[data] = value
+        
+
+    def isBulkread(self):
+        return self.isBulkread
+
+    def getAnalog(self, port):
+        return self.analogInput[port]
+    
+    def getEncoderPosition(self, port):
+        return self.encoderPosition[port]
+
+    def getEncoverVelocity(self, port):
+        return self.encoderVelocity[port]
+    
+    def getDigitalIO(self, port):
+        return self.digitalInput[port]
+    
+    def getIsOverCurrent(self, port):
+        return self.motorIsOvercurrent[port]
