@@ -45,7 +45,10 @@ class dcmotor:
         return self.currentLimit
     
     def isOverCurrent(self):
-        return null
+        if REVModule.isBulkread():
+            return REVModule.getIsOverCurrent[self.port]
+        else:
+            return null
     
     def stopAndResetEncoder(self):
         enable(False)
@@ -77,6 +80,9 @@ class dcmotor:
         return getMotorAtTarget(self.commObj, self.module, self.port)
 
     def getVelocity(self):
+        if REVModule.isBulkread():
+            return REVModule.getEncoderVelocity[self.port]
+        else:
         bulkData = REVModule.getBulkInputData(self.commObj, self.module)
         val = int(bulkData[self.port + VELOCITY_OFFSET])
         bits = int(16)
@@ -85,7 +91,10 @@ class dcmotor:
         return val
     
     def getPosition(self):
-        return getMotorEncoderPosition(self.commObj, self.module, self.port)
+        if REVModule.isBulkread():
+            return REVModule.getEncoderPosition[self.port]
+        else:
+            return getMotorEncoderPosition(self.commObj, self.module, self.port)
 
     def getCurrent(self):
         return self.motorCurrent.getADC(0)
@@ -117,6 +126,9 @@ class encoder:
         resetMotorEncoder(self.commObj, self.module, self.port)
         
     def getVelocity(self):
+        if REVModule.isBulkread():
+            return REVModule.getEncoderVelocity[self.port]
+        else:
         bulkData = REVModule.getBulkInputData(self.commObj, self.module)
         val = int(bulkData[self.port + VELOCITY_OFFSET])
         bits = int(16)
@@ -152,6 +164,3 @@ class servo:
     
     def isEnabled(self):
         return self.isEnabled
-
-class colorSensorV3:
-    def __init__(self):
