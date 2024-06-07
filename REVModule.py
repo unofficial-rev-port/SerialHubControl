@@ -209,7 +209,7 @@ class Module:
     def getEncoderPosition(self, port):
         return self.encoderPosition[port]
 
-    def getEncoverVelocity(self, port):
+    def getEncoderVelocity(self, port):
         return self.encoderVelocity[port]
     
     def getDigitalIO(self, port):
