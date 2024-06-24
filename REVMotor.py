@@ -249,8 +249,8 @@ class internalMotor:
         bulkData = REVModule.getBulkInputData(self.commObj, self.destinationModule)
         val = int(bulkData[self.channel + VELOCITY_OFFSET])
         bits = int(16)
-        if val & 1 << bits - 1 != 0:
-            val = val - (1 << bits)
+        if val & 1 << 16 - 1 != 0:
+            val = val - (1 << 16)
         return val
 
     def getCurrent(self):

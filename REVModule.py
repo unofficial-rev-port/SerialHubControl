@@ -167,14 +167,14 @@ class Module:
         return REVI2C.imuBlockReadQuery(self.address)
 
     def getBulkRead(self):
-        if self.bulkInputData not null:
+        if self.bulkInputData != None:
             return self.bulkInputData
         else:
-            self.bulkInputData = getBulkData()
+            self.bulkInputData = self.getBulkData()
             return self.bulkInputData
 
     def invalidateBulkCache(self):
-        self.bulkInputData = null
+        self.bulkInputData = None
         self.analogInput = []
         self.digitalInput = []
         self.encoderPosition = []
@@ -182,7 +182,7 @@ class Module:
         self.motorIsOvercurrent = []
     
     def parseBulkData(self):
-        read = getBulkRead()
+        read = self.getBulkRead()
         for data in range(0,3):
             value = 
             self.analogInput[data] = value
@@ -190,13 +190,13 @@ class Module:
             value =
             self.digitalInput[data] = value
         for data in range(0,3):
-            value = 
+            value = int(data)
             self.encoderPosition[data] = value
         for data in range(0,3):
-            value = 
+            value = int(data)
             self.encoderVelocity[data] = value
         for data in range(0,3):
-            value =
+            value = (value & (1 << (16 - 1)))
             self.motorIsOvercurrent[data] = value
         
 
