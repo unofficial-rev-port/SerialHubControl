@@ -44,10 +44,14 @@ def getServoEnable(commObj, destination, servoChannel):
     return packet.payload.enabled
 
 class internalServo:
-    def __init__(self, commObj, channel, destinationModule):
+    def __init__(self, commObj, channel, destinationModule, sourceModule):
         self.commObj = commObj
         self.destinationModule = destinationModule
         self.channel = channel
+        self.isEnabled = True
+        self.period = None
+        self.pulseWidth = None
+        self.revMod = sourceModule
 
     def setDestination(self, destinationModule):
         """Set destination lynx module for a servo"""
@@ -68,10 +72,11 @@ class internalServo:
     def setPeriod(self, period):
         """Set servo period"""
         setServoConfiguration(self.commObj, self.destinationModule, self.channel, period)
+        self.period = period
 
     def getPeriod(self):
         """Get servo period"""
-        return getServoConfiguration(self.commObj, self.destinationModule, self.channel)
+        return self.period
 
     def setPulseWidth(self, pulseWidth):
         """Set the pulse width for the servo"""
@@ -79,7 +84,7 @@ class internalServo:
 
     def getPulseWidth(self):
         """Get the pulse width for the servo"""
-        return getServoPulseWidth(self.commObj, self.destinationModule, self.channel)
+        return self.pulseWidth
 
     def enable(self):
         """Enable the servo"""
@@ -91,7 +96,7 @@ class internalServo:
 
     def isEnabled(self):
         """Check if a servo is enabled"""
-        return getServoEnable(self.commObj, self.destinationModule, self.channel)
+        return self.enable
 
     def init(self):
         """Setup the servo"""

@@ -25,7 +25,7 @@ class Module:
     def init_periphs(self):
         """Initalizes all devices (Motors, Servos, Digital I/O, and ADC"""
         for i in range(0, 4):
-            self.motors.append(REVMotor.Motor(self.commObj, i, self.address))
+            self.motors.append(REVMotor.Motor(self.commObj, i, self.address, self))
             self.motors[-1].setMode(0, 1)
             self.motors[-1].setPower(0)
             self.i2cChannels.append(REVI2C.I2CChannel(self.commObj, i, self.address))
@@ -34,7 +34,7 @@ class Module:
             self.dioPins.append(REVDIO.DIOPin(self.commObj, j, self.address))
 
         for k in range(0, 6):
-            self.servos.append(REVServo.Servo(self.commObj, k, self.address))
+            self.servos.append(REVServo.Servo(self.commObj, k, self.address, self))
             self.servos[-1].init()
 
         for l in range(0, 4):

@@ -230,7 +230,7 @@ class internalMotor:
 
     def getPower(self):
         """Get motor power (cached float, -1 to 1)"""
-        return power
+        return self.power
 
     def setTargetVelocity(self, velocity):
         """Set motor target velocity (counts per second, will overflow at +/-32768)"""
@@ -242,27 +242,30 @@ class internalMotor:
         return self.targetVelocity
 
     def setTargetPosition(self, position, tolerance):
-        """Set motor target position"""
+        """Set motor target position (int, encoder counts)"""
         setMotorTargetPosition(self.commObj, self.destinationModule, self.channel, position, tolerance)
+        self.targetPosition = position
+        self.targetTolerance = tolerance
 
     def getTargetPosition(self):
-        """Get motor target position"""
-        return getMotorTargetPosition(self.commObj, self.destinationModule, self.channel)
-
+        """Get motor target position (cached int, encoder counts)"""
+        return self.targetPosition
+    
     def isAtTarget(self):
-        """Check if the motor has reached its target position"""
+        """Check if the motor has reached its target position (bool)"""
         return getMotorAtTarget(self.commObj, self.destinationModule, self.channel)
 
     def getPosition(self):
-        """Get the current encoder positon"""
-        return getMotorEncoderPosition(self.commObj, self.destinationModule, self.channel)
+        """Get the current encoder positon (int encoder counts)"""
+        if self.revMod.isBulkread():
+            return getMotorEncoderPosition(self.commObj, self.destinationModule, self.channel)
 
     def resetPosition(self):
         """Reset motor encoder to zero, functionally identical to resetEncoder()"""
         resetMotorEncoder(self.commObj, self.destinationModule, self.channel)
 
     def getVelocity(self):
-        """Get motor velocity"""
+        """Get motor velocity (int, overflows at +/-32768)"""
         if self.revMod.isBulkread():
             return self.revMod.getEncoderVelocity[self.port]
         else:
@@ -274,24 +277,38 @@ class internalMotor:
             return val
 
     def getCurrent(self):
-        """Get motor current draw in amps (?)"""
+        """Get motor current draw(int, milliamps)"""
         return self.motorCurrent.getADC(0)
 
     def setVelocityPID(self, p, i, d):
         """Set velocity PID Coefficients"""
         setVelocityPIDCoefficients(self.commObj, self.destinationModule, self.channel, p, i, d)
+        self.velocityPIDCoefficients = (p, i, d)
 
     def getVelocityPID(self):
-        """Get velocity PID Coefficients"""
-        return getVelocityPIDCoefficients(self.commObj, self.destinationModule, self.channel)
+        """Get velocity PID Coefficients (cached tupple)"""
+        if self.velocityPIDCoefficients != None: 
+            self.velocityPIDCoefficients =  getVelocityPIDCoefficients(self.commObj, self.destinationModule, self.channel)
+        return self.velocityPIDCoefficients
+    
 
     def setPositionPID(self, p, i, d):
         """Set position PID Coefficients"""
         setPositionPIDCoefficients(self.commObj, self.destinationModule, self.channel, p, i, d)
+        self.positionPIDCoefficients = (p, i, d)
 
     def getPositionPID(self):
-        """Get position PID Coefficients"""
-        return getPositionPIDCoefficients(self.commObj, self.destinationModule, self.channel)
+        """Get position PID Coefficients (cached tupple)"""
+        if self.positionPIDCoefficients != None: 
+            self.positionPIDCoefficients =  getPositionPIDCoefficients(self.commObj, self.destinationModule, self.channel)
+        return self.positionPIDCoefficients
+    
+    def isOverCurrent(self):
+        """see if """
+        if self.revMod.isBulkRead():
+            return self.revMod.isOverCurrent(self.port)
+        else:
+            return "this is only bulkread"
 
     def init(self):
         """Initalize the motor to constant power and coast breaking mode"""
