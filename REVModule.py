@@ -3,7 +3,7 @@ from . import REVMotor, REVServo, REVADC, REVDIO, REVI2C
 ##Note: Modules are hubs (lynx modules)
 class Module:
     """Lynx Module device"""
-    def __init__(self, commObj, address, parent, manualBulkread = true):
+    def __init__(self, commObj, address, parent, manualBulkread = True):
         self.commObj = commObj
         self.address = address
         self.parent = parent
@@ -12,7 +12,7 @@ class Module:
         self.i2cChannels = []
         self.adcPins = []
         self.dioPins = []
-        self.bulkInputData = null
+        self.bulkInputData = None
         self.analogInput = []
         self.digitalInput = []
         self.encoderPosition = []
@@ -180,24 +180,23 @@ class Module:
         self.encoderPosition = []
         self.encoderVelocity = []
         self.motorIsOvercurrent = []
-    
+
     def parseBulkData(self):
         read = self.getBulkRead()
-        for data in range(0,3):
-            value = 
-            self.analogInput[data] = value
-        for data in range(0,3):
-            value =
-            self.digitalInput[data] = value
-        for data in range(0,3):
-            value = int(data)
-            self.encoderPosition[data] = value
-        for data in range(0,3):
-            value = int(data)
-            self.encoderVelocity[data] = value
-        for data in range(0,3):
-            value = (value & (1 << (16 - 1)))
-            self.motorIsOvercurrent[data] = value
+        for port in range(0,4):
+            self.analogInput[port] = int((read[port + ANALOG_OFFSET] & (1 << (16 - 1))))
+
+        for port in range(0,4):
+            self.digitalInput[port] = bool(read[DIGITAL_OFFSET] & 1)
+
+        for port in range(0,4):
+            self.encoderPosition[port] = int(read[port + POSITION_OFFSET])
+
+        for port in range(0,4):
+            self.encoderVelocity[port] = int((read[port + VELOCITY_OFFSET] & (1 << (16 - 1))))
+
+        for port in range(0,4):
+            self.motorIsOvercurrent[port] = bool(read[STATUS_OFFSET] & 1)
         
 
     def isBulkread(self):
@@ -217,3 +216,9 @@ class Module:
     
     def getIsOverCurrent(self, port):
         return self.motorIsOvercurrent[port]
+
+VELOCITY_OFFSET = 6
+ANALOG_OFFSET = 10
+DIGITAL_OFFSET = 0
+POSITION_OFFSET = 1
+STATUS_OFFSET = 5
