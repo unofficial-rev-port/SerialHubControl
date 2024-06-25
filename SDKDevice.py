@@ -1,114 +1,98 @@
-import REVServo, REVMotor, REVModule, REVDIO, REVADC
+import REVServo, REVMotor, REVDIO, REVADC
 
 class dcmotor:
-    def __init__(self, commObj, port, module):
+    def __init__(self, commObj, port, module, sourceModule):
         self.port = port
         self.module = module
         self.commObj = commObj
-        self.current =  REVADC.ADCPin(self.commObj, 8 + port, self.module)W
-        self.mode = MODE_CONSTANT_POWER
-        self.zeroPowerBehavior = FLOAT_AT_ZERO
-        self.enabled = true
-        self.currentLimit = null
-        self.power = 0
-        self.targetPosition = null
-        self.targetVelocity = null
-        self.velocityPIDCoefficients = (null, null, null)
-        self.positionPIDCoefficients = (null, null, null)
+        self.revMod = sourceModule
+        self.internal = REVMotor(self.commObj, self.port, self.module, self.revMod)
 
     def setMode(self, mode):
-        REVMotor.setMotorChannelMode(self.commObj, self.module, self.port, mode, self.zeroPowerBehavior)
+        self.internal.setMotorChannelMode(self.commObj, self.module, self.port, mode, self.zeroPowerBehavior)
         self.mode = mode
 
     def getMode(self):
-        return REVMotor.getmotorChannelmode(self, self.module, self.port)[0]
+        return self.internal.getmotorChannelmode(self, self.module, self.port)[0]
 
     def setZeroPowerBehavior(self, zeroPowerBehavior):
-        REVMotor.setMotorChannelMode(self.commObj, self.module, self.port, self.mode, self.zeroPowerBehavior)
+        self.internal.setMotorChannelMode(self.commObj, self.module, self.port, self.mode, self.zeroPowerBehavior)
         self.zeroPowerBehavior = zeroPowerBehavior
 
     def getZeroPowerBehavior(self):
         return self.zeroPowerBehavior
     
     def enable(self, enable):
-        REVMotor.setMotorChannelEnable(self.commObj, self.module, self.port, int(enable))
+        self.internal.setMotorChannelEnable(self.commObj, self.module, self.port, int(enable))
         self.enabled = enable
 
     def isEnabled(self):
         return self.enabled
 
     def setCurrentAlert(self, current):
-        REVMotor.setMotorChannelCurrentAlertLevel(self.commObj, self.module, self.port, current)
+        self.internal.setMotorChannelCurrentAlertLevel(self.commObj, self.module, self.port, current)
         self.currentLimit = current
     
     def getCurrentLimit(self):
         return self.currentLimit
     
     def isOverCurrent(self):
-        if REVModule.isBulkread():
-            return REVModule.getIsOverCurrent[self.port]
-        else:
-            return null
+        return self.revMod.isOverCurrent(self.port)
     
     def stopAndResetEncoder(self):
-        enable(False)
-        REVMotor.resetMotorEncoder(self.commObj, self.module, self.port)
-        enable(True)
+        self.enable(False)
+        self.internal.resetMotorEncoder(self.commObj, self.module, self.port)
+        self.enable(True)
 
     def setPower(self, power):
         self.power = power
-        REVMotor.setMotorConstantPower(self.commObj, self.module, self.port, power)
+        self.internal.setMotorConstantPower(self.commObj, self.module, self.port, power)
 
     def getPower(self):
         return self.power
     
     def setTargetVelocity(self, velocity):
         self.targetVelocity = velocity
-        REVMotor.setMotorTargetVelocity(self.commObj, self.module, self.port, velocity)
+        self.internal.setMotorTargetVelocity(self.commObj, self.module, self.port, velocity)
 
     def getTargetVelocity(self):
         return self.targetVelocity
 
     def setTargetPosition(self, position, tolerance = 20):
         self.targetPosition = position
-        REVMotor.setMotorTargetPosition(self.commObj, self.module, self.port, position, tolerance)
+        self.internal.setMotorTargetPosition(self.commObj, self.module, self.port, position, tolerance)
 
     def getTargetPosition(self):
         return self.targetPosition
 
     def atTarget(self):
-        return getMotorAtTarget(self.commObj, self.module, self.port)
+        return self.getMotorAtTarget(self.commObj, self.module, self.port)
 
     def getVelocity(self):
-        if REVModule.isBulkread():
-            return REVModule.getEncoderVelocity[self.port]
-        else:
-        bulkData = REVModule.getBulkInputData(self.commObj, self.module)
-        val = int(bulkData[self.port + VELOCITY_OFFSET])
-        bits = int(16)
-        if val & 1 << bits - 1 != 0:
-            val = val - (1 << bits)
-        return val
+        if self.revMod.isBulkread():
+            return self.revMod.getEncoderVelocity[self.port]
+        else: 
+            return self.internal.getVelocity()
     
     def getPosition(self):
-        if REVModule.isBulkread():
-            return REVModule.getEncoderPosition[self.port]
+        if self.revMod.isBulkread():
+            return self.revMod.getEncoderPosition[self.port]
         else:
-            return REVMotor.getMotorEncoderPosition(self.commObj, self.module, self.port)
+            return self.internal.getMotorEncoderPosition(self.commObj, self.module, self.port)
 
     def getCurrent(self):
         return self.motorCurrent.getADC(0)
 
     def setVelocityPID(self, p, i, d):
         self.velocityPIDCoefficients = (p, i, d)
-        REVMotor.setVelocityPIDCoefficients(self.commObj, self.module, self.port, p, i, d)
+        self.internal.setVelocityPIDCoefficients(self.commObj, self.module, self.port, p, i, d)
 
     def getVelocityPID(self):
         return self.velocityPIDCoefficients
 
     def setPositionPID(self, p, i, d):
         self.positionPIDCoefficients = (p, i, d)
-        REVMotor.setPositionPIDCoefficients(self.commObj, self.module, self.port, p, i, d)
+        self.internal.setPositionPIDCoefficients(self.commObj, self.module, self.port, p, i, d)
 
     def getPositionPID(self):
         return self.positionPIDCoefficients
@@ -120,47 +104,49 @@ class encoder:
         self.commObj = commObj
     
     def getPosition(self):
-        return getMotorEncoderPosition(self.commObj, self.module, self.port)
+        return self.internal.getMotorEncoderPosition(self.commObj, self.module, self.port)
 
     def resetEncoder(self):
-        REVMotor.resetMotorEncoder(self.commObj, self.module, self.port)
+        self.internal.resetMotorEncoder(self.commObj, self.module, self.port)
         
     def getVelocity(self):
-        if REVModule.isBulkread():
-            return REVModule.getEncoderVelocity[self.port]
+        return self.internal.getVelocity(
+        if self.revMod.isBulkread():
+            return self.revMod.getEncoderVelocity[self.port]
         else:
-        bulkData = REVModule.getBulkInputData(self.commObj, self.module)
-        val = int(bulkData[self.port + VELOCITY_OFFSET])
-        bits = int(16)
-        if val & 1 << bits - 1 != 0:
-            val = val - (1 << bits)
-        return val
+            bulkData = self.revMod.getBulkInputData(self.commObj, self.module)
+            val = int(bulkData[self.port + VELOCITY_OFFSET])
+            bits = int(16)
+            if val & 1 << bits - 1 != 0:
+                val = val - (1 << bits)
+            return val
 
 class servo:
     def __init__(self, commObj, port, module):
         self.port = port
         self.module = module
         self.commObj = commObj
-        self.position = null
+        self.position = NotImplementedError
         self.range = range
-        self.isEnabled = true
+        self.isEnabled = True
+        self.internal = REVServo()
 
     def setPosition(self, position):
         self.position = position
-        REVServo.SetPWMPulseWidth((min(max(position, 0), 1) * self.range)
+        self.internal.SetPWMPulseWidth((min(max(position, 0), 1) * self.range))
     
     def getPosition(self):
         return self.position
     
     def setPwmRange(self, range):
         self.range = range
-        REVServo.setPeriod(range)
+        self.internal.setPeriod(range)
 
     def getPwmRange(self):
         return self.range
     
     def enable(self, enable):
-        REVServo.setServoEnable(self.commObj, self.destinationModule, self.channel, int(enable))
+        self.internal.setServoEnable(self.commObj, self.destinationModule, self.channel, int(enable))
     
     def isEnabled(self):
         return self.isEnabled

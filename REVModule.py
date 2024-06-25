@@ -1,4 +1,5 @@
-from . import REVMotor, REVServo, REVADC, REVDIO, REVI2C
+from SDKDevice import REVMotor
+import REVServo, REVADC, REVDIO, REVI2C
 
 ##Note: Modules are hubs (lynx modules)
 class Module:

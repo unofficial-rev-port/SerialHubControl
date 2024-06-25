@@ -153,11 +153,21 @@ def getPositionPIDCoefficients(commObj, destination, motorChannel):
 
 class internalMotor:
     """Motor device type"""
-    def __init__(self, commObj, channel, destinationModule):
+    def __init__(self, commObj, channel, destinationModule, sourceModule):
         self.channel = channel
         self.destinationModule = destinationModule
         self.commObj = commObj
         self.motorCurrent = REVADC.ADCPin(self.commObj, 8 + channel, self.destinationModule)
+        self.mode = MODE_CONSTANT_POWER
+        self.zeroPowerBehavior = FLOAT_AT_ZERO
+        self.enabled = True
+        self.currentLimit = None
+        self.power = 0
+        self.targetPosition = None
+        self.targetVelocity = None
+        self.velocityPIDCoefficients = (None, None, None)
+        self.positionPIDCoefficients = (None, None, None)
+        self.revMod = sourceModule
 
     def setDestination(self, destinationModule):
         """Set the destination module"""
@@ -179,50 +189,57 @@ class internalMotor:
     def setMode(self, mode, zeroFloat):
         """Set the mode and zero power behavior"""
         setMotorChannelMode(self.commObj, self.destinationModule, self.channel, mode, zeroFloat)
+        self.mode = mode
+        self.zeroPowerBehavior = zeroFloat
 
     def getMode(self):
-        """Get the mode and zero power behavior"""
-        return getMotorChannelMode(self.commObj, self.destinationModule, self.channel)
+        """Get the mode and zero power behavior (cached, tupple (mode, zeroPower))"""
+        return (self.mode, self.zeroPowerBehavior)
 
     def enable(self):
         """Enable the motor"""
         setMotorChannelEnable(self.commObj, self.destinationModule, self.channel, 1)
+        self.isEnabled = True
 
     def disable(self):
         """Disable the motor"""
         setMotorChannelEnable(self.commObj, self.destinationModule, self.channel, 0)
+        self.isEnabled = False
 
     def isEnabled(self):
-        """Check if the motor is enabled"""
-        return getMotorChannelEnable(self.commObj, self.destinationModule, self.channel)
+        """Check if the motor is enabled (cached boolean)"""
+        return self.isEnabled
 
     def setCurrentLimit(self, limit):
-        """Set the current alert"""
+        """Set the current alert point (Mv)"""
         setMotorChannelCurrentAlertLevel(self.commObj, self.destinationModule, self.channel, limit)
+        self.currentLimit = limit
 
     def getCurrentLimit(self):
-        """Get the current alert"""
-        return getMotorChannelCurrentAlertLevel(self.commObj, self.destinationModule, self.channel)
+        """Get the current alert point (Mv, cached)"""
+        return self.currentLimit
 
     def resetEncoder(self):
         """Reset motor encoder to zero, functionally identical to resetPosition()"""
         resetMotorEncoder(self.commObj, self.destinationModule, self.channel)
 
     def setPower(self, powerLevel):
-        """Set motor power"""
+        """Set motor power (float, -1 to 1)"""
         setMotorConstantPower(self.commObj, self.destinationModule, self.channel, powerLevel)
+        self.power = powerLevel
 
     def getPower(self):
-        """Get motor power"""
-        return getMotorConstantPower(self.commObj, self.destinationModule, self.channel)
+        """Get motor power (cached float, -1 to 1)"""
+        return power
 
     def setTargetVelocity(self, velocity):
-        """Set motor target velocity"""
+        """Set motor target velocity (counts per second, will overflow at +/-32768)"""
         setMotorTargetVelocity(self.commObj, self.destinationModule, self.channel, velocity)
+        self.targetVelocity = velocity
 
     def getTargetVelocity(self):
-        """Get motor target velocity"""
-        return getMotorTargetVelocity(self.commObj, self.destinationModule, self.channel)
+        """Get motor target velocity(cached counts per second, overflows at +/-32768)"""
+        return self.targetVelocity
 
     def setTargetPosition(self, position, tolerance):
         """Set motor target position"""
@@ -246,12 +263,15 @@ class internalMotor:
 
     def getVelocity(self):
         """Get motor velocity"""
-        bulkData = REVModule.getBulkInputData(self.commObj, self.destinationModule)
-        val = int(bulkData[self.channel + VELOCITY_OFFSET])
-        bits = int(16)
-        if val & 1 << 16 - 1 != 0:
-            val = val - (1 << 16)
-        return val
+        if self.revMod.isBulkread():
+            return self.revMod.getEncoderVelocity[self.port]
+        else:
+            bulkData = self.revMod.getBulkInputData(self.commObj, self.module)
+            val = int(bulkData[self.port + VELOCITY_OFFSET])
+            bits = int(16)
+            if val & 1 << bits - 1 != 0:
+                val = val - (1 << bits)
+            return val
 
     def getCurrent(self):
         """Get motor current draw in amps (?)"""
