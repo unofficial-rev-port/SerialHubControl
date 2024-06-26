@@ -1,4 +1,4 @@
-from . import REVModule, REVADC, REVMessage as REVMsg
+import REVModule, REVADC, REVMessage as REVMsg
 
 ##Motor driver
 def setMotorChannelMode(commObj, destination, motorChannel, motorMode, floatAtZero):

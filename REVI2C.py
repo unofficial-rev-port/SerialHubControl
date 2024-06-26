@@ -1,4 +1,4 @@
-from . import REVMessage as REVMsg
+import REVMessage as REVMsg
 import time
 
 def i2cWriteSingleByte(commObj, destination, i2cChannel, slaveAddress, byteToWrite):

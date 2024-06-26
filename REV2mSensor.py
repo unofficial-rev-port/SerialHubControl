@@ -1,5 +1,5 @@
-from . import REVComm
-from .REVI2C import I2CDevice
+import REVComm
+from REVI2C import I2CDevice
 import sys, time
 VcselPeriodPreRange = 0
 VcselPeriodFinalRange = 1

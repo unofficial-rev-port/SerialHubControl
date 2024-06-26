@@ -1,4 +1,4 @@
-from . import REVMessage as REVMsg
+import REVMessage as REVMsg
 
 def setSingleDIOOutput(commObj, destination, dioPin, value):
     """Set a single Digital IO output pin"""

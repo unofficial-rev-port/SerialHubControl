@@ -3,7 +3,7 @@ from REVModule import Module
 import binascii, serial, time
 
 #Serial Communications 
-class REVcomm:
+class REVComm:
     """The serial communications for REV hubs"""
     def __init__(self):
         self.serialReceive_Thread = False
