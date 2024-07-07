@@ -1,4 +1,4 @@
-import REVMessage as REVMsg
+from . import REVMessage as REVMsg
 
 ##Note: appears to just be part of the current sensing for motors? (ADC = analog digital converter)
 class ADCPin:
