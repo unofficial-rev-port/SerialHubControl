@@ -5,7 +5,7 @@ import binascii, serial, time
 #Serial Communications 
 class REVcomm:
     """The serial communications for REV hubs"""
-    def __init__(self):
+    def __init__(self, errors = False):
         self.serialReceive_Thread = False
         self.FunctionReturnTime = 0
         self.msgNum = 1
@@ -18,6 +18,7 @@ class REVcomm:
         self.discoveryTimeout = 0.5
         self.averageMsgTime = 0
         self.REVProcessor = serial.Serial(baudrate=460800, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
+        self.errorHandler = errors
 
     def listPorts(self):
         """list available ports"""
@@ -26,17 +27,22 @@ class REVcomm:
 
     def openActivePort(self):
         """Open a serial port"""
-        numSerialErrors = 2
-        while not self.REVProcessor.isOpen():
-            self.REVProcessor.port = self.listPorts()[0].getName()
-            try:
-                self.REVProcessor.open()
-            except serial.SerialException as e:
-                print('Serial port error: ' + str(e) + ' retrying...')
-                numSerialErrors -= 1
-                if numSerialErrors == 0:
-                    break
-                time.sleep(1)
+        try:
+            numSerialErrors = 2
+            while not self.REVProcessor.isOpen():
+                self.REVProcessor.port = self.listPorts()[0].getName()
+                try:
+                    self.REVProcessor.open()
+                except serial.SerialException as e:
+                    error ='Serial port error: ' + str(e) + ' retrying...'
+                    print(error)
+                    numSerialErrors -= 1
+                    if numSerialErrors == 0:
+                        self.throwError(error)
+                        break
+                    time.sleep(1)
+        except IndexError:
+            self.throwError('There are no connected hubs')
 
     def closeActivePort(self):
         """Close an active serial port"""
@@ -256,7 +262,7 @@ class REVcomm:
         packets = self.sendAndReceive(self.discovered, 255)
         REVModules = []
         for packet in packets:
-            module = Module(self, packet.header.source, packet.payload.parent)
+            module = Module(self, packet.header.source, packet.payload.parent, self)
             module.init_periphs()
             REVModules.append(module)
         return REVModules
@@ -291,3 +297,10 @@ class REVcomm:
         readVersionStringMsg = REVMsg.ReadVersionString()
         packet = self.sendAndReceive(readVersionStringMsg, destination)
         return packet.payload.versionString
+    
+    def throwError(self, error): 
+        """This is a generic error handler api that allows objects farhter down the stack to send errors to an error handler"""
+        if self.errorHandler != False:
+            self.errorHandler.throwError(error)
+        else:
+            print(error)

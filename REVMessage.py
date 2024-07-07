@@ -1,3 +1,4 @@
+from REVConstants import *
 class REVBytes:
     creationCounter = 0
 
@@ -1262,10 +1263,6 @@ class I2CBlockReadQuery_RSP(REVPacket):
 class IMUBlockReadQuery_RSP(REVPacket):
     def __init__(self):
         REVPacket.__init__(self, REVHeader(Cmd=RespNum.IMUBlockReadQuery_RSP), IMUBlockReadQuery_RSP_Payload())
-
-#Constants for messages
-PAYLOAD_MAX_SIZE = 128
-RESPONSE_BIT = 32768
 
 class LEDColor:
     Red = 0

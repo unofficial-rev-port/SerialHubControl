@@ -1,10 +1,12 @@
 from SDKDevice import REVMotor
 import REVServo, REVADC, REVDIO, REVI2C
+from REVConstants import *
 
 ##Note: Modules are hubs (lynx modules)
 class Module:
     """Lynx Module device"""
-    def __init__(self, commObj, address, parent, manualBulkread = True):
+    def __init__(self, commObj, address, parent, errors, manualBulkread = True):
+        self.errorHandler = errors
         self.commObj = commObj
         self.address = address
         self.parent = parent
@@ -24,21 +26,24 @@ class Module:
 
     def init_periphs(self):
         """Initalizes all devices (Motors, Servos, Digital I/O, and ADC"""
-        for i in range(0, 4):
-            self.motors.append(REVMotor.Motor(self.commObj, i, self.address, self))
-            self.motors[-1].setMode(0, 1)
-            self.motors[-1].setPower(0)
-            self.i2cChannels.append(REVI2C.I2CChannel(self.commObj, i, self.address))
+        try:
+            for i in range(0, 4):
+                self.motors.append(REVMotor.Motor(self.commObj, i, self.address, self))
+                self.motors[-1].setMode(0, 1)
+                self.motors[-1].setPower(0)
+                self.i2cChannels.append(REVI2C.I2CChannel(self.commObj, i, self.address))
 
-        for j in range(0, 8):
-            self.dioPins.append(REVDIO.DIOPin(self.commObj, j, self.address))
+            for j in range(0, 8):
+                self.dioPins.append(REVDIO.DIOPin(self.commObj, j, self.address))
 
-        for k in range(0, 6):
-            self.servos.append(REVServo.Servo(self.commObj, k, self.address, self))
-            self.servos[-1].init()
+            for k in range(0, 6):
+                self.servos.append(REVServo.Servo(self.commObj, k, self.address, self))
+                self.servos[-1].init()
 
-        for l in range(0, 4):
-            self.adcPins.append(REVADC.ADCPin(self.commObj, l, self.address))
+            for l in range(0, 4):
+                self.adcPins.append(REVADC.ADCPin(self.commObj, l, self.address))
+        except:
+            self.errorHandler.throwError('Error while initializing device')
 
     def killSwitch(self):
         """Disable everything for safe stop"""
@@ -217,9 +222,6 @@ class Module:
     
     def getIsOverCurrent(self, port):
         return self.motorIsOvercurrent[port]
-
-VELOCITY_OFFSET = 6
-ANALOG_OFFSET = 10
-DIGITAL_OFFSET = 0
-POSITION_OFFSET = 1
-STATUS_OFFSET = 5
+    
+    def throwError(self, error):
+        self.errorHandler.throwError(error)

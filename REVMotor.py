@@ -1,4 +1,5 @@
-from . import REVModule, REVADC, REVMessage as REVMsg
+import REVModule, REVADC, REVMessage as REVMsg
+from REVConstants import *
 
 ##Motor driver
 def setMotorChannelMode(commObj, destination, motorChannel, motorMode, floatAtZero):
@@ -315,13 +316,3 @@ class internalMotor:
         self.setMode(0, 1)
         self.setPower(0)
         self.enable()
-
-#Motor constants
-Q16 = 65536.0
-MODE_CONSTANT_POWER = 0
-MODE_CONSTANT_VELOCITY = 1
-MODE_POSITION_TARGET = 2
-BRAKE_AT_ZERO = 0
-FLOAT_AT_ZERO = 1
-VELOCITY_OFFSET = 6
-CURRENT_OFFSET = 8
