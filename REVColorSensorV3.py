@@ -1,8 +1,9 @@
 """REV ControlHub Interface for the REV Color Sensor"""
 import logging
-from .REVI2C import I2CDevice
+from REVI2C import I2CDevice
+from REVConstants import *
 
-def getDominantColor(r, g, b):
+def getDominantColor(r: int, g: int, b: int) -> str:
     """ return dominant color as a string """
     m = max(r, g, b)
     if m == r:
@@ -14,13 +15,14 @@ def getDominantColor(r, g, b):
     return 'none'
 
 
-def rgbi2c(r, g, b, ir):
+def rgbi2c(r: int, g: int, b: int, ir: int) -> float:
     """ convert red, green, blue and ir value to clear """
     return r + g + b - 2 * ir
 
 
 class REVColorSensorV3(I2CDevice):
     """For use with the REV Color Sensor V3"""
+
 
     def __init__(self, commObj, channel, destinationModule):
         I2CDevice.__init__(self, commObj, channel, destinationModule, self._REV_COLOR_SENSOR_ADDRESS)
@@ -133,3 +135,46 @@ class REVColorSensorV3(I2CDevice):
         """write to the i2c register"""
         self.logger.debug('Writing 0x%02X 0x%02X', register, value)
         self.writeMultipleBytes(2, register & 255 | value << 8)
+
+_REV_COLOR_SENSOR_ADDRESS = 82
+_REV_COLOR_SENSOR_ID = 194
+_MAIN_CTRL = 0
+_PS_LED = 1
+_PS_PULSES = 2
+_PS_MEAS_RATE = 3
+_LS_MEAS_RATE = 4
+_LS_GAIN = 5
+_PART_ID = 6
+_MAIN_STATUS = 7
+_PS_DATA = 8
+_LS_DATA_IR = 10
+_LS_DATA_GREEN = 13
+_LS_DATA_BLUE = 16
+_LS_DATA_RED = 19
+_INT_CFG = 25
+_INT_PST = 26
+_PS_THRES_UP = 27
+_PS_THRES_LOW = 29
+_PS_CAN = 31
+_LS_THRES_UP = 33
+_LS_THRES_LOW = 36
+_LS_THRES_VAR = 39
+_PS_EN = 1
+_LS_EN = 2
+_RGB_MODE = 4
+_PS_MEAS_RATE_6_25ms = 1
+_PS_MEAS_RATE_12_5ms = 2
+_PS_MEAS_RATE_25ms = 3
+_PS_MEAS_RATE_50ms = 4
+_PS_MEAS_RATE_100ms = 5
+_PS_MEAS_RATE_200ms = 6
+_PS_MEAS_RATE_400ms = 7
+_PS_RES_8_BIT = 0
+_PS_RES_9_BIT = 8
+_PS_RES_10_BIT = 16
+_PS_RES_11_BIT = 24
+_LS_GAIN_1 = 0
+_LS_GAIN_3 = 1
+_LS_GAIN_6 = 2
+_LS_GAIN_9 = 3
+_LS_GAIN_18 = 4
