@@ -1,0 +1,3 @@
+"""Constants for LibREVMessage"""
+PAYLOAD_MAX_SIZE = 128
+RESPONSE_BIT = 32768
