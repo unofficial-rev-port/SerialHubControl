@@ -85,36 +85,40 @@ class REVcomm:
                         raise(TimeoutError)
 
                     if discoveryMode:
-                        packet = []
+                        packet = [] 
 
+                    # read all incoming bytes
                     bytes = []
-                    #See if need to read a packet
-                    if self.REVProcessor.inWaiting() > 0:
-                        #read all bytes in packet
-                        while self.REVProcessor.inWaiting() > 0:
-                            byte = str(binascii.hexlify(self.REVProcessor.read(1)).upper())[2:-1]
-                            bytes.append(byte)
-                        #check for valid packet header and save packet information
+                    packet = ""
+                    while self.REVProcessor.in_waiting() < 0:
+                        newByte = str(binascii.hexlify(self.REVProcessor.read(1)).upper())[2:-1]
+                        bytes.append(newByte)
+                        packet += newByte
+                        
+                    # process the packet if theres any bytes
+                    if len(bytes) != 0:
                         if bytes[0] == '44' and bytes[1] == '4B':
-                            incomingPacket = '444B' + bytes[2] + bytes[3]
-                            lengthBytes = bytes[2] + bytes[3]
-                            packetLength = int(int(lengthBytes, 16) >> 8 | int(lengthBytes, 16) % 256 << 8)
-                        #process the packet payload
-                        if packetLength <= REVMsg.PAYLOAD_MAX_SIZE:
-                            for byte in range(4, len(bytes)):
-                                incomingPacket += bytes[byte]
-                                if len(incomingPacket) / 2 == packetLength:
-                                    receivedChkSum = int(bytes[-1], 16)
-                                    chksumdata = self.checkPacket(incomingPacket, receivedChkSum)
-                                    if chksumdata[0]:
-                                        newPacket = self.processPacket(incomingPacket)
+                            lengthbytes = bytes[2] + bytes[3]
+                            packet += lengthbytes
+                            packetLength = int(int(lengthbytes, 16) >> 8 | int(lengthbytes, 16) % 256 << 8)
+                            if packetLength <= REVMsg.PAYLOAD_MAX_SIZE:
+                                if len(packet) / 2 == packetLength:
+                                    receivedChkSum = int(packet[-2:], 16)
+                                    calculatedChkSum = self.checkPacket(packet, receivedChkSum)
+                                    if calculatedChkSum[0]:
+                                        newPacket = self.processPacket(packet)
                                         if discoveryMode:
                                             packet.append(newPacket)
-                                            return packet
+                                            time.sleep(2)
+                                            if self.REVProcessor.inWaiting() > 0:
+                                                pass
+                                            else:
+                                                return packet
                                         else:
                                             return newPacket
                                     else:
-                                        print('Invalid ChkSum: ', chksumdata[1], '==', chksumdata[2])
+                                        print('Invalid ChkSum: ',  calculatedChkSum[1], '==', calculatedChkSum[2])
+                            
                 else:
                     exit('\n\n\n!!!Attempting to send something other than a REVPacket!!!\n\n\n')
 
